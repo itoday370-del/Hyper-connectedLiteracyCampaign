@@ -17,7 +17,8 @@
     <div class="wrap">
       <p class="eyebrow">초연결사회 캠페인 · 「후원 명세서」</p>
       <h1>공유하기 전에 3초</h1>
-      <p class="lead">한 편의 글을 읽고, 반응하고, 그다음에 전체 이야기를 확인해 보세요. 5분이면 끝나요.</p>
+      <p class="lead">한 편의 글을 읽고, 반응하고, 그다음에 전체 이야기를 확인해 보세요.</p>
+      <p class="booth-start">시작하기 전에 부스의 OX 판에 <b class="red">빨간 스티커</b>를 먼저 붙여 주세요.</p>
       <ol class="steps" aria-label="진행 단계">
         <li data-step="1" class="on"><span>1</span>글 읽기</li>
         <li data-step="2"><span>2</span>맥락 보기</li>
@@ -57,6 +58,24 @@
       </div>
 
       <div class="card">
+        <h3>나라면 이 글을 어디로 보냈을까?</h3>
+        <p class="sub">여러 개 골라도 돼요. 고르고 '지도에 잇기'를 누르면 모두의 선택이 쌓인 확산 지도가 나와요.</p>
+        <div class="choices spread-choices" id="spread-choices">
+          <button type="button" data-v="group">단톡방</button>
+          <button type="button" data-v="story">인스타 스토리</button>
+          <button type="button" data-v="community">커뮤니티 게시판</button>
+          <button type="button" data-v="blog">블로그</button>
+          <button type="button" data-v="dm">친구에게 1:1</button>
+          <button type="button" data-v="none">안 보낸다</button>
+        </div>
+        <div class="form-row"><span class="nick-label" id="spread-msg"></span><button type="button" class="btn" id="spread-save" disabled>지도에 잇기</button></div>
+        <div id="spread-wrap" hidden>
+          <div class="spread-map" id="spread-map"></div>
+          <p class="sub center" id="spread-total"></p>
+        </div>
+      </div>
+
+      <div class="card">
         <h3>댓글 <span class="count" id="comment-count">0</span></h3>
         <form class="comment-form" id="comment-form" autocomplete="off">
           <textarea id="comment-text" maxlength="300" rows="3" placeholder="이 글을 보고 떠오른 생각을 한 줄 남겨 주세요"></textarea>
@@ -75,7 +94,7 @@
 
       <div class="next">
         <button type="button" class="btn btn-big" id="go-context" disabled>전체 맥락 보기</button>
-        <p class="hint" id="go-hint">위에서 '나라면?'을 먼저 골라 주세요</p>
+        <p class="hint" id="go-hint">'나라면?'을 고르고 확산 지도에 이어 주세요</p>
       </div>
     </section>
 
@@ -176,6 +195,12 @@
       </div>
 
       <div class="card">
+        <h3>모두가 만든 확산 지도</h3>
+        <div class="spread-map" id="result-map"></div>
+        <p class="sub center" id="result-spread-total"></p>
+      </div>
+
+      <div class="card">
         <h3>댓글로 본 변화</h3>
         <div class="stat-row">
           <div class="stat"><b id="stat-before">0</b><span>맥락 보기 전 댓글</span></div>
@@ -185,7 +210,7 @@
 
       <div class="card booth">
         <h3>마지막으로 부스에서</h3>
-        <p>1. 확산 지도 판넬에 '나라면 이 글을 보냈을 곳'까지 실을 이어 주세요.</p>
+        <p>1. 같은 OX 판에 이번에는 <b class="blue">파란 스티커</b>를 붙여 주세요.</p>
         <p>2. 이 결과 화면을 보여 주면 간식을 드려요.</p>
       </div>
 

@@ -66,11 +66,14 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // 맥락 보기 전/후 선택 (한 사람당 문서 하나)
+    // 맥락 보기 전/후 선택과 확산 지도 (한 사람당 문서 하나)
     match /responses/{uid} {
       allow read: if true;
       allow create, update: if signedIn() && isOpen() && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['before', 'after', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['before', 'after', 'spread', 'updatedAt'])
+        && (!('spread' in request.resource.data) || (request.resource.data.spread is list
+             && request.resource.data.spread.size() <= 6
+             && request.resource.data.spread.hasOnly(['group', 'story', 'community', 'blog', 'dm', 'none'])))
         && (!('before' in request.resource.data) || choice(request.resource.data.before))
         && (!('after' in request.resource.data) || choice(request.resource.data.after))
         && request.resource.data.updatedAt == request.time;

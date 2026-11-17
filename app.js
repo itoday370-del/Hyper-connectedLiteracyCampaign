@@ -2,6 +2,8 @@
 const FIREBASE_VERSION = "10.12.2";
 const LABELS = { share: "공유한다", comment: "댓글만 단다", pass: "그냥 넘긴다", check: "사실을 더 확인한다" };
 const ORDER = ["share", "comment", "pass", "check"];
+const SPREAD = { group: "단톡방", story: "인스타 스토리", community: "커뮤니티", blog: "블로그", dm: "친구 1:1" };
+const SPREAD_KEYS = ["group", "story", "community", "blog", "dm", "none"];
 
 /* ---------- 작은 도구 ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -162,6 +164,8 @@ const state = {
   firstComment: local.get("firstComment", null),
   revealed: local.get("revealed", false),
   myVotes: local.get("votes", {}),
+  spread: local.get("spread", null),
+  spreadPick: new Set(),
   sort: "best",
   comments: [],
   open: true,
@@ -214,8 +218,9 @@ function bindChoices(boxSel, key) {
 }
 
 function updateGates() {
-  $("#go-context").disabled = !state.first;
-  $("#go-hint").hidden = !!state.first;
+  const ready = !!state.first && !!state.spread;
+  $("#go-context").disabled = !ready;
+  $("#go-hint").hidden = ready;
   $("#go-result").disabled = !state.second;
   $("#result-hint").hidden = !!state.second;
 }
@@ -360,6 +365,100 @@ function renderChecks(items) {
   }
 }
 
+/* ---------- 확산 지도 ---------- */
+function bindSpread() {
+  const box = $("#spread-choices"), save = $("#spread-save");
+  const paint = () => {
+    const picked = state.spread ? new Set(state.spread) : state.spreadPick;
+    $$("button", box).forEach(b => b.classList.toggle("on", picked.has(b.dataset.v)));
+    box.classList.toggle("saved", !!state.spread);
+    save.disabled = !!state.spread || state.spreadPick.size === 0;
+    save.textContent = state.spread ? "이었어요" : "지도에 잇기";
+    $("#spread-wrap").hidden = !state.spread;
+  };
+  box.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b || state.spread) return;
+    const v = b.dataset.v;
+    if (v === "none") { state.spreadPick = state.spreadPick.has("none") ? new Set() : new Set(["none"]); }
+    else {
+      state.spreadPick.delete("none");
+      state.spreadPick.has(v) ? state.spreadPick.delete(v) : state.spreadPick.add(v);
+    }
+    paint();
+  });
+  save.addEventListener("click", async () => {
+    if (!state.open) { $("#spread-msg").textContent = "지금은 참여할 수 없어요."; return; }
+    const list = SPREAD_KEYS.filter(k => state.spreadPick.has(k));
+    if (!list.length) return;
+    try {
+      await store.saveResponse("spread", list);
+      state.spread = list; local.set("spread", list);
+      $("#spread-msg").textContent = "";
+    } catch (err) { $("#spread-msg").textContent = "잇지 못했어요. 다시 눌러 주세요."; console.error(err); }
+    paint(); updateGates();
+  });
+  paint();
+}
+
+function spreadSvg(counts, people, mine) {
+  const W = 340, H = 250, cx = 170, cy = 125;
+  const keys = Object.keys(SPREAD);
+  const max = Math.max(1, ...keys.map(k => counts[k] || 0));
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "확산 지도: " + keys.map(k => `${SPREAD[k]} ${counts[k] || 0}명`).join(", "));
+  const mk = (tag, attrs, text) => {
+    const n = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    if (text != null) n.textContent = text;
+    svg.append(n); return n;
+  };
+  const style = getComputedStyle(document.documentElement);
+  const red = style.getPropertyValue("--accent").trim() || "#d6342c";
+  const line = style.getPropertyValue("--line").trim() || "#ddd";
+  const text = style.getPropertyValue("--text").trim() || "#222";
+  const muted = style.getPropertyValue("--muted").trim() || "#777";
+  const surface = style.getPropertyValue("--surface").trim() || "#fff";
+  const pos = keys.map((k, i) => {
+    const a = -Math.PI / 2 + i * (2 * Math.PI / keys.length);
+    return { k, x: cx + Math.cos(a) * 125, y: cy + Math.sin(a) * 92 };
+  });
+  for (const p of pos) {
+    const c = counts[p.k] || 0;
+    mk("line", { x1: cx, y1: cy, x2: p.x, y2: p.y, stroke: c ? red : line, "stroke-width": c ? 2 + 12 * c / max : 1.5, "stroke-linecap": "round", opacity: c ? 0.85 : 1 });
+  }
+  mk("circle", { cx, cy, r: 30, fill: red });
+  mk("text", { x: cx, y: cy + 5, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "#fff" }, "글 하나");
+  for (const p of pos) {
+    const c = counts[p.k] || 0;
+    const isMine = mine && mine.includes(p.k);
+    mk("rect", { x: p.x - 38, y: p.y - 17, width: 76, height: 34, rx: 9, fill: surface, stroke: isMine ? red : line, "stroke-width": isMine ? 2.5 : 1 });
+    mk("text", { x: p.x, y: p.y - 2, "text-anchor": "middle", "font-size": 11.5, "font-weight": 700, fill: text }, SPREAD[p.k]);
+    mk("text", { x: p.x, y: p.y + 12, "text-anchor": "middle", "font-size": 11, fill: muted }, c + "명");
+  }
+  return svg;
+}
+
+function renderSpread(responses) {
+  const withSpread = responses.filter(r => Array.isArray(r.spread));
+  const counts = {};
+  let links = 0, none = 0;
+  for (const r of withSpread) for (const k of r.spread) {
+    if (k === "none") { none++; continue; }
+    if (SPREAD[k]) { counts[k] = (counts[k] || 0) + 1; links++; }
+  }
+  const msg = withSpread.length
+    ? `지금까지 ${withSpread.length}명이 이 글을 ${links}곳으로 보냈어요.` + (none ? ` 안 보낸다는 ${none}명이에요.` : "")
+    : "아직 아무도 잇지 않았어요.";
+  for (const [mapId, totalId] of [["#spread-map", "#spread-total"], ["#result-map", "#result-spread-total"]]) {
+    $(mapId).replaceChildren(spreadSvg(counts, withSpread.length, state.spread));
+    $(totalId).textContent = msg;
+  }
+}
+
 /* ---------- 결과 ---------- */
 function renderResults(responses) {
   const before = responses.filter(r => r.before);
@@ -438,12 +537,13 @@ async function start() {
   $$(".my-nick").forEach(n => { n.textContent = myNick(); });
   bindChoices("#first-choices", "first");
   bindChoices("#second-choices", "second");
+  bindSpread();
   updateGates();
 
   store.onSettings(applySettings);
   store.onComments(list => { state.comments = list; renderComments(); renderCommentStats(); });
   store.onChecks(renderChecks);
-  store.onResponses(renderResults);
+  store.onResponses(list => { renderResults(list); renderSpread(list); });
   setupAdmin();
 
   $("#comment-form").addEventListener("submit", async e => {
