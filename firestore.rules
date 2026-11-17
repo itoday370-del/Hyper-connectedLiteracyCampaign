@@ -1,0 +1,80 @@
+rules_version = '2';
+
+// 공유하기 전에 3초 캠페인 — Firestore 보안 규칙
+// Firebase 콘솔 > Firestore Database > 규칙 탭에 통째로 붙여 넣고 '게시'를 누르세요.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    function isOpen() {
+      return !exists(/databases/$(database)/documents/settings/main)
+        || get(/databases/$(database)/documents/settings/main).data.open == true;
+    }
+    function goodText(t, max) { return t is string && t.size() > 0 && t.size() <= max; }
+    function okNick(n) { return n is string && n.size() > 0 && n.size() <= 20; }
+    function choice(v) { return v in ['share', 'comment', 'pass', 'check']; }
+    function step(newV, oldV) { return newV - oldV >= -1 && newV - oldV <= 1; }
+
+    // 댓글 열기/막기 (관리자만 바꿈)
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 관리자 목록 (콘솔에서만 추가)
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // 게시글 댓글과 답글
+    match /comments/{id} {
+      allow read: if true;
+      allow create: if signedIn() && isOpen()
+        && request.resource.data.keys().hasOnly(['text', 'nick', 'phase', 'parentId', 'likes', 'dislikes', 'hidden', 'uid', 'createdAt'])
+        && goodText(request.resource.data.text, 300)
+        && okNick(request.resource.data.nick)
+        && request.resource.data.phase in ['before', 'after']
+        && (request.resource.data.parentId == null || request.resource.data.parentId is string)
+        && request.resource.data.likes == 0
+        && request.resource.data.dislikes == 0
+        && request.resource.data.hidden == false
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      // 추천/비추천: 숫자만, 한 번에 1씩
+      allow update: if isAdmin() || (signedIn() && isOpen()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'dislikes'])
+        && step(request.resource.data.likes, resource.data.likes)
+        && step(request.resource.data.dislikes, resource.data.dislikes)
+        && request.resource.data.likes >= 0
+        && request.resource.data.dislikes >= 0);
+      allow delete: if isAdmin();
+    }
+
+    // '공유하기 전에 확인할 것' 메모
+    match /checks/{id} {
+      allow read: if true;
+      allow create: if signedIn() && isOpen()
+        && request.resource.data.keys().hasOnly(['text', 'nick', 'uid', 'createdAt'])
+        && goodText(request.resource.data.text, 100)
+        && okNick(request.resource.data.nick)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isAdmin();
+    }
+
+    // 맥락 보기 전/후 선택 (한 사람당 문서 하나)
+    match /responses/{uid} {
+      allow read: if true;
+      allow create, update: if signedIn() && isOpen() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['before', 'after', 'updatedAt'])
+        && (!('before' in request.resource.data) || choice(request.resource.data.before))
+        && (!('after' in request.resource.data) || choice(request.resource.data.after))
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+  }
+}
