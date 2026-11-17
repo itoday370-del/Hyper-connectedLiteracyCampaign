@@ -208,3 +208,6 @@ blockquote { margin: 8px 0 4px; padding: 8px 12px; background: var(--surface-2);
   .choices { grid-template-columns: repeat(4, 1fr); }
   .notes { grid-template-columns: 1fr 1fr 1fr; }
 }
+
+.booth { border: 2px solid var(--accent); }
+.booth p { margin: 6px 0; }
