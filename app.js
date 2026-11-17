@@ -84,7 +84,11 @@ class LocalStore {
     all[this.uid] = { ...(all[this.uid] || {}), [field]: value };
     this._write("responses", all);
   }
-  async setOpen(open) { this._write("settings", { open }); }
+  async setOpen(open) { this._write("settings", { ...this._read("settings"), open }); }
+  async resetAll() {
+    this._write("comments", []); this._write("checks", []); this._write("responses", {});
+    this._write("settings", { ...this._read("settings"), round: Date.now() });
+  }
 }
 
 /* ---------- 저장소: Firebase(모두가 함께 보는 저장) ---------- */
@@ -153,7 +157,24 @@ class FirebaseStore {
     const { doc, setDoc, serverTimestamp } = this.fs;
     await setDoc(doc(this.db, "responses", this.uid), { [field]: value, updatedAt: serverTimestamp() }, { merge: true });
   }
-  async setOpen(open) { const { doc, setDoc } = this.fs; await setDoc(doc(this.db, "settings", "main"), { open }); }
+  async setOpen(open) { const { doc, setDoc } = this.fs; await setDoc(doc(this.db, "settings", "main"), { open }, { merge: true }); }
+  async resetAll(onProgress) {
+    const { collection, getDocs, writeBatch, doc, setDoc } = this.fs;
+    let done = 0;
+    for (const name of ["comments", "checks", "responses"]) {
+      const snap = await getDocs(collection(this.db, name));
+      const docs = snap.docs;
+      for (let i = 0; i < docs.length; i += 400) {
+        const batch = writeBatch(this.db);
+        docs.slice(i, i + 400).forEach(d => batch.delete(d.ref));
+        await batch.commit();
+        done += Math.min(400, docs.length - i);
+        if (onProgress) onProgress(done);
+      }
+    }
+    await setDoc(doc(this.db, "settings", "main"), { round: Date.now() }, { merge: true });
+    return done;
+  }
 }
 
 /* ---------- 상태 ---------- */
@@ -501,6 +522,26 @@ function setupAdmin() {
   $("#admin-state").textContent = store.mode === "local"
     ? "시험 모드에서는 이 기기에서 바로 관리할 수 있어요."
     : (admin ? "관리자 권한이 있어요." : "관리자 권한이 없어요. 위 ID를 Firebase의 admins 컬렉션에 문서 ID로 추가하세요.");
+  const reset = $("#reset-all"), resetMsg = $("#reset-msg");
+  reset.hidden = !admin;
+  let armed = false, timer;
+  reset.addEventListener("click", async () => {
+    if (!armed) {
+      armed = true; reset.textContent = "한 번 더 누르면 모두 지워져요";
+      timer = setTimeout(() => { armed = false; reset.textContent = "전체 초기화"; }, 3000);
+      return;
+    }
+    clearTimeout(timer); armed = false;
+    reset.disabled = true; reset.textContent = "지우는 중...";
+    try {
+      const n = await store.resetAll(done => { resetMsg.textContent = `${done}개 지웠어요...`; });
+      resetMsg.textContent = `모두 지웠어요. (${n}개)`;
+    } catch (err) {
+      console.error(err);
+      resetMsg.textContent = "지우지 못했어요. 관리자 권한과 Firebase 규칙을 확인해 주세요.";
+    }
+    reset.disabled = false; reset.textContent = "전체 초기화";
+  });
   const btn = $("#toggle-open");
   btn.hidden = !admin;
   btn.addEventListener("click", async () => {
@@ -508,7 +549,18 @@ function setupAdmin() {
   });
 }
 
+const PROGRESS_KEYS = ["first", "second", "firstComment", "revealed", "votes", "spread"];
 function applySettings(s) {
+  const round = s.round || 0;
+  const mine = local.get("round", null);
+  if (mine === null) local.set("round", round);
+  else if (mine !== round) {
+    // 관리자가 전체 초기화를 하면 이 기기의 진행 기록도 처음으로 돌림
+    PROGRESS_KEYS.forEach(k => { try { localStorage.removeItem("c3_" + k); } catch { /* 무시 */ } });
+    local.set("round", round);
+    location.reload();
+    return;
+  }
   state.open = s.open !== false;
   $("#closed-banner").hidden = state.open;
   $$("#comment-form textarea, #comment-form button, #check-form textarea, #check-form button")
