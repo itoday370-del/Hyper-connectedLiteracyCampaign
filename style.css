@@ -170,8 +170,10 @@ blockquote { margin: 8px 0 4px; padding: 8px 12px; background: var(--surface-2);
 .mine-value { margin: 2px 0 12px; font-weight: 600; white-space: pre-wrap; }
 .mine-value:last-child { margin-bottom: 0; }
 
-.notes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.notes { display: block; column-count: 2; column-gap: 8px; margin-top: 12px; }
 .notes li {
+  display: inline-block; width: 100%; margin: 0 0 8px; vertical-align: top;
+  break-inside: avoid; -webkit-column-break-inside: avoid; overflow-wrap: anywhere; white-space: pre-wrap;
   background: #fff3b0; color: #3b3200; border-radius: 6px; padding: 10px; font-size: 14px;
   box-shadow: 0 1px 2px rgba(0,0,0,.08); position: relative;
 }
@@ -206,7 +208,7 @@ blockquote { margin: 8px 0 4px; padding: 8px 12px; background: var(--surface-2);
 
 @media (min-width: 560px) {
   .choices { grid-template-columns: repeat(4, 1fr); }
-  .notes { grid-template-columns: 1fr 1fr 1fr; }
+  .notes { column-count: 3; }
 }
 
 .booth { border: 2px solid var(--accent); }
