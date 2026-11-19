@@ -216,7 +216,7 @@ function go(step) {
     li.classList.toggle("on", n === step);
     li.classList.toggle("done", n < step);
   });
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: "instant" });
 }
 
 /* ---------- 선택 버튼 ---------- */
