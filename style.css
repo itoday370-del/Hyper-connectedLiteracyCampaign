@@ -241,3 +241,7 @@ body.intro-open { overflow: hidden; }
 .intro-tap b { font-size: 20px; }
 .intro-tap small { font-size: 14px; opacity: .8; }
 .intro-controls { z-index: 3; }
+
+/* 맥락 보기: 스크롤하면 하나씩 등장 */
+.sr { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+.sr.sr-in { opacity: 1; transform: none; }
