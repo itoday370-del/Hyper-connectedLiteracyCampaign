@@ -549,7 +549,7 @@ function setupAdmin() {
   });
 }
 
-const PROGRESS_KEYS = ["first", "second", "firstComment", "revealed", "votes", "spread"];
+const PROGRESS_KEYS = ["first", "second", "firstComment", "revealed", "votes", "spread", "introSeen"];
 function applySettings(s) {
   const round = s.round || 0;
   const mine = local.get("round", null);

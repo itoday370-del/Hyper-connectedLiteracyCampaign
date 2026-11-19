@@ -7,9 +7,17 @@
   <meta name="description" content="소설 「후원 명세서」로 만든 초연결사회 맥락 확인 캠페인">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
+  <div id="intro" class="intro" role="dialog" aria-label="소개 영상" hidden>
+    <video id="intro-video" src="media/intro.mp4?v=5" poster="media/intro-poster.jpg" playsinline preload="auto"></video>
+    <div class="intro-bar"><span id="intro-progress"></span></div>
+    <div class="intro-controls">
+      <button type="button" id="intro-sound" class="intro-btn">🔇 소리 켜기</button>
+      <button type="button" id="intro-skip" class="intro-btn intro-skip">건너뛰기 ›</button>
+    </div>
+  </div>
   <div id="demo-banner" class="banner" hidden>시험 모드예요. 댓글이 이 기기에만 저장돼요.</div>
   <div id="closed-banner" class="banner banner-closed" hidden>캠페인이 끝나서 지금은 댓글을 쓸 수 없어요.</div>
 
@@ -18,6 +26,7 @@
       <p class="eyebrow">초연결사회 캠페인 · 「후원 명세서」</p>
       <h1>공유하기 전에 3초</h1>
       <p class="lead">한 편의 글을 읽고, 반응하고, 그다음에 전체 이야기를 확인해 보세요.</p>
+      <button type="button" id="intro-replay" class="intro-replay">▶ 소개 영상 다시 보기</button>
       <p class="booth-start">시작하기 전에 부스의 OX 판에 <b class="red">빨간 스티커</b>를 먼저 붙여 주세요.</p>
       <ol class="steps" aria-label="진행 단계">
         <li data-step="1" class="on"><span>1</span>글 읽기</li>
@@ -244,7 +253,35 @@
     <p>개인정보(이름, 학교, 연락처)는 쓰지 말아 주세요.</p>
   </footer>
 
-  <script src="config.js?v=4"></script>
-  <script type="module" src="app.js?v=4"></script>
+  <script>
+  (function () {
+    var box = document.getElementById("intro"), v = document.getElementById("intro-video");
+    var sound = document.getElementById("intro-sound"), skip = document.getElementById("intro-skip");
+    var bar = document.getElementById("intro-progress"), replay = document.getElementById("intro-replay");
+    var KEY = "c3_introSeen";
+    function seen() { try { return localStorage.getItem(KEY) === "true"; } catch (e) { return false; } }
+    function mark() { try { localStorage.setItem(KEY, "true"); } catch (e) {} }
+    function label() { sound.textContent = v.muted ? "🔇 소리 켜기" : "🔊 음소거"; }
+    function close() {
+      mark(); v.pause(); box.classList.add("intro-out");
+      setTimeout(function () { box.hidden = true; box.classList.remove("intro-out"); document.body.classList.remove("intro-open"); }, 350);
+    }
+    function open(withSound) {
+      box.hidden = false; document.body.classList.add("intro-open");
+      v.currentTime = 0; v.muted = !withSound; label();
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { v.muted = true; label(); v.play().catch(function () {}); });
+    }
+    sound.addEventListener("click", function () { v.muted = !v.muted; if (v.paused) v.play().catch(function () {}); label(); });
+    skip.addEventListener("click", close);
+    v.addEventListener("ended", close);
+    v.addEventListener("timeupdate", function () { if (v.duration) bar.style.width = (v.currentTime / v.duration * 100) + "%"; });
+    v.addEventListener("click", function () { if (v.paused) v.play().catch(function () {}); });
+    replay.addEventListener("click", function () { open(true); });
+    if (!new URLSearchParams(location.search).has("admin") && !seen()) open(true);
+  })();
+  </script>
+  <script src="config.js?v=5"></script>
+  <script type="module" src="app.js?v=5"></script>
 </body>
 </html>
