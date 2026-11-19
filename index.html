@@ -7,11 +7,12 @@
   <meta name="description" content="소설 「후원 명세서」로 만든 초연결사회 맥락 확인 캠페인">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <div id="intro" class="intro" role="dialog" aria-label="소개 영상" hidden>
-    <video id="intro-video" src="media/intro.mp4?v=5" poster="media/intro-poster.jpg" playsinline preload="auto"></video>
+    <video id="intro-video" src="media/intro.mp4?v=6" poster="media/intro-poster.jpg" playsinline preload="auto"></video>
+    <button type="button" id="intro-tap" class="intro-tap" hidden><span class="intro-play">▶</span><b>화면을 눌러 시작하기</b><small>소리가 나와요</small></button>
     <div class="intro-bar"><span id="intro-progress"></span></div>
     <div class="intro-controls">
       <button type="button" id="intro-sound" class="intro-btn">🔇 소리 켜기</button>
@@ -258,20 +259,25 @@
     var box = document.getElementById("intro"), v = document.getElementById("intro-video");
     var sound = document.getElementById("intro-sound"), skip = document.getElementById("intro-skip");
     var bar = document.getElementById("intro-progress"), replay = document.getElementById("intro-replay");
+    var tap = document.getElementById("intro-tap");
     var KEY = "c3_introSeen";
     function seen() { try { return localStorage.getItem(KEY) === "true"; } catch (e) { return false; } }
     function mark() { try { localStorage.setItem(KEY, "true"); } catch (e) {} }
     function label() { sound.textContent = v.muted ? "🔇 소리 켜기" : "🔊 음소거"; }
     function close() {
-      mark(); v.pause(); box.classList.add("intro-out");
+      mark(); v.pause(); tap.hidden = true; box.classList.add("intro-out");
       setTimeout(function () { box.hidden = true; box.classList.remove("intro-out"); document.body.classList.remove("intro-open"); }, 350);
     }
     function open(withSound) {
       box.hidden = false; document.body.classList.add("intro-open");
       v.currentTime = 0; v.muted = !withSound; label();
       var p = v.play();
-      if (p && p.catch) p.catch(function () { v.muted = true; label(); v.play().catch(function () {}); });
+      if (p && p.catch) p.catch(function () { tap.hidden = false; });
     }
+    tap.addEventListener("click", function () {
+      tap.hidden = true; v.muted = false; label();
+      v.play().catch(function () { v.muted = true; label(); v.play().catch(function () {}); });
+    });
     sound.addEventListener("click", function () { v.muted = !v.muted; if (v.paused) v.play().catch(function () {}); label(); });
     skip.addEventListener("click", close);
     v.addEventListener("ended", close);
