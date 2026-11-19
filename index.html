@@ -7,7 +7,7 @@
   <meta name="description" content="소설 「후원 명세서」로 만든 초연결사회 맥락 확인 캠페인">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
   <div id="intro" class="intro" role="dialog" aria-label="소개 영상" hidden>
@@ -168,6 +168,23 @@
       </div>
 
       <div class="card">
+        <h3>전체 이야기를 안 지금, 댓글을 다시 쓴다면?</h3>
+        <p class="sub">여기 쓴 댓글은 게시글 댓글 목록에 '맥락 본 후' 표시로 올라가요.</p>
+        <form class="comment-form" id="after-form" autocomplete="off">
+          <textarea id="after-text" maxlength="300" rows="3" placeholder="처음 댓글과 생각이 달라졌다면 지금 생각을 남겨 주세요"></textarea>
+          <div class="form-row">
+            <span class="nick-label">닉네임 <b class="my-nick"></b></span>
+            <button type="submit" class="btn">등록</button>
+          </div>
+          <p class="form-msg" id="after-msg" role="status"></p>
+        </form>
+        <div id="after-mine" hidden>
+          <p class="mine-label">맥락 본 후 쓴 댓글</p>
+          <p class="mine-value" id="after-mine-text"></p>
+        </div>
+      </div>
+
+      <div class="card">
         <h3>전체 이야기를 안 지금, 다시 고른다면?</h3>
         <div class="choices" id="second-choices">
           <button type="button" data-v="share">공유한다</button>
@@ -305,6 +322,6 @@
   })();
   </script>
   <script src="config.js?v=5"></script>
-  <script type="module" src="app.js?v=9"></script>
+  <script type="module" src="app.js?v=10"></script>
 </body>
 </html>

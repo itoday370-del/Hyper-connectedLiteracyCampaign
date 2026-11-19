@@ -183,6 +183,7 @@ const state = {
   first: local.get("first", null),
   second: local.get("second", null),
   firstComment: local.get("firstComment", null),
+  afterComment: local.get("afterComment", null),
   revealed: local.get("revealed", false),
   myVotes: local.get("votes", {}),
   spread: local.get("spread", null),
@@ -549,7 +550,7 @@ function setupAdmin() {
   });
 }
 
-const PROGRESS_KEYS = ["first", "second", "firstComment", "revealed", "votes", "spread", "introSeen"];
+const PROGRESS_KEYS = ["first", "second", "firstComment", "afterComment", "revealed", "votes", "spread", "introSeen"];
 function applySettings(s) {
   const round = s.round || 0;
   const mine = local.get("round", null);
@@ -563,7 +564,7 @@ function applySettings(s) {
   }
   state.open = s.open !== false;
   $("#closed-banner").hidden = state.open;
-  $$("#comment-form textarea, #comment-form button, #check-form textarea, #check-form button")
+  $$("#comment-form textarea, #comment-form button, #after-form textarea, #after-form button, #check-form textarea, #check-form button")
     .forEach(n => { n.disabled = !state.open; });
   const btn = $("#toggle-open");
   if (btn) btn.textContent = state.open ? "댓글 막기" : "댓글 다시 열기";
@@ -602,6 +603,22 @@ async function start() {
     e.preventDefault();
     const ta = $("#comment-text");
     if (await submitComment(ta.value, null, $("#comment-msg"))) ta.value = "";
+  });
+  function showAfterMine() {
+    $("#after-mine").hidden = !state.afterComment;
+    $("#after-mine-text").textContent = state.afterComment || "";
+  }
+  showAfterMine();
+  $("#after-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const ta = $("#after-text"), msg = $("#after-msg"); msg.classList.remove("ok");
+    const text = ta.value;
+    if (await submitComment(text, null, msg)) {
+      ta.value = "";
+      state.afterComment = text.trim(); local.set("afterComment", state.afterComment);
+      showAfterMine();
+      msg.textContent = "등록했어요. 게시글 댓글 목록에서도 볼 수 있어요."; msg.classList.add("ok");
+    }
   });
   $("#check-form").addEventListener("submit", async e => {
     e.preventDefault();
