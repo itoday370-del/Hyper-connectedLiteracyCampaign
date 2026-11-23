@@ -37,7 +37,7 @@
       zh: '社区 &gt; 生活杂谈 <span class="badge">浏览量第一</span>',
       ja: 'コミュニティ &gt; 日常の話 <span class="badge">閲覧数1位</span>'
     },
-    post_title: { en: "I sponsored a child for 5 years and got treated like a snob", zh: "我资助了5年的孩子，却把我当成俗物", ja: "5年間支援してきた子どもに俗物扱いされました" },
+    post_title: { en: "I sponsored a child for 5 years and got treated like an ATM", zh: "被我资助了5年的孩子当成了俗物", ja: "5年間支援してきた子どもに俗物扱いされました" },
     post_meta: {
       en: "<span>Anonymous</span><span>Views 148,203</span><span>Likes 3,917</span>",
       zh: "<span>匿名</span><span>浏览 148,203</span><span>推荐 3,917</span>",
@@ -64,7 +64,7 @@
       ja: "生活保護を受けている子がどうしてこんな靴の名前を知っているのか驚いて、担当者にもう一度確認しました。担当者は、子どもが欲しがっているのは確かにそれだと言い、プレゼントはしなくても大丈夫だと言いました。"
     },
     post_p5: {
-      en: "Is this how you treat someone who faithfully sponsored you for five years, like a snob?",
+      en: "Is this how you treat someone who faithfully sponsored you for five years, like an ATM?",
       zh: "对一个5年来按时资助的人，就这样当成俗物吗？",
       ja: "5年間欠かさず支援してきた人を、こんなふうに俗物扱いするんですか？"
     },
@@ -107,7 +107,7 @@
     rv1_q: { en: "“They told me to say what I really needed, so I did.”", zh: "“是让我说真正需要的东西，我才说的。”", ja: "「本当に必要なものを言ってって言われたから言ったのに。」" },
     rv2_tag: { en: "What the sponsor had been demanding", zh: "资助人之前提过的要求", ja: "支援者がこれまで求めてきたこと" },
     rv2_p: {
-      en: "According to the caseworker, this sponsor had long demanded that the child be sent to a charity party, that they be told the child's underwear size, and that a spending statement be faxed to them.",
+      en: "According to the caseworker, this sponsor had long been demanding that the child be sent to a charity party, that the child's underwear size be shared, and that a spending statement be faxed over.",
       zh: "据负责人说，这位资助人之前就一直要求让孩子去参加慈善派对、告诉他孩子内衣的尺码、把支出明细用传真发给他。",
       ja: "担当者によると、この支援者は以前から、子どもをチャリティーパーティーに参加させてほしい、子どもの下着のサイズを教えてほしい、支出明細書をファックスで送ってほしいと求めてきました。"
     },
@@ -122,15 +122,15 @@
     },
     rv5_tag: { en: "The child", zh: "那个孩子", ja: "その子は" },
     rv5_p: {
-      en: "The child already knew about the post and every comment. In the end, the child took on even more part-time work, on top of the money being saved to repair grandma's wheelchair, and bought those sneakers with their own money.",
+      en: "The child already knew about the post and every comment. In the end, the child took the part-time wages they had been saving to fix grandma's wheelchair, worked even more shifts, and bought those sneakers with their own money.",
       zh: "孩子早就知道了那篇帖子和所有评论。最后，孩子在为修奶奶轮椅而攒的打工钱之外又多打了一份工，用自己的钱买下了那双运动鞋。",
       ja: "子どもは投稿もコメントもすでに全部知っていました。結局、おばあさんの車椅子の修理代のために貯めていたアルバイト代に、さらにアルバイトを増やして、そのスニーカーを自分のお金で買いました。"
     },
     real_label: { en: "It doesn't only happen in fiction", zh: "这不只是小说里的事", ja: "小説の中だけの話ではありません" },
-    real_h3: { en: "The 2017 post about “a sponsored child who demanded a 200,000-won jacket”", zh: "2017年“要求20万韩元羽绒服的受资助儿童”一文", ja: "2017年「20万ウォンのジャンパーを求めた支援児童」の投稿" },
+    real_h3: { en: "The 2017 post about “a sponsored child who demanded a 200,000-won jacket”", zh: "2017年“要求20万韩元外套的受资助儿童”一文", ja: "2017年「20万ウォンのジャンパーを求めた支援児童」の投稿" },
     real_p: {
       en: "In December 2017, a sponsor posted on an online board that “a sponsored child demanded a 200,000-won jacket.” The sponsor deleted it about a day later, but it had already spread to other online communities. Here is what the foundation said in its official statement.",
-      zh: "2017年12月，一位资助人在网络论坛上发帖说“受资助儿童要求一件20万韩元的羽绒服”。资助人大约一天后删除了帖子，但帖子早已传到其他社群和论坛。基金会在声明中说明了以下内容。",
+      zh: "2017年12月，一位资助人在网络论坛上发帖说“受资助儿童要求一件20万韩元的外套”。资助人大约一天后删除了帖子，但帖子早已传到其他社群和论坛。基金会在声明中说明了以下内容。",
       ja: "2017年12月、ある支援者が「支援児童が20万ウォンのジャンパーを求めてきた」という投稿をネット掲示板に載せました。支援者は1日ほどで投稿を消しましたが、すでに別のコミュニティへ広まったあとでした。財団が声明で明らかにした内容は次のとおりです。"
     },
     real_li1: {
@@ -163,7 +163,7 @@
     go_result: { en: "See results", zh: "查看结果", ja: "結果を見る" },
     result_hint: { en: "Please pick 'What would you choose?'", zh: "请先选择“再选一次”", ja: "「もう一度選ぶなら？」を選んでください" },
     step4_title: { en: "Here's how our reactions changed", zh: "我们的反应是这样变化的", ja: "わたしたちの反応はこう変わりました" },
-    lg_before: { en: "Before context", zh: "看背景之前", ja: "背景を見る前" },
+    lg_before: { en: "Before context", zh: "看背景前", ja: "背景を見る前" },
     lg_after: { en: "After context", zh: "看过背景后", ja: "背景を見たあと" },
     map_h3: { en: "The spread map we all made", zh: "大家一起画出的传播地图", ja: "みんなで作った拡散マップ" },
     change_h3: { en: "Change seen in comments", zh: "从评论看到的变化", ja: "コメントで見る変化" },
@@ -206,8 +206,8 @@
     anon_nick: { ko: "익명{n}", en: "Anon{n}", zh: "匿名{n}", ja: "匿名{n}" },
     ph_before: { ko: "맥락 보기 전", en: "Before context", zh: "看背景前", ja: "背景を見る前" },
     ph_after: { ko: "맥락 본 후", en: "After context", zh: "看过背景后", ja: "背景を見たあと" },
-    like: { ko: "추천 {n}", en: "Like {n}", zh: "推荐 {n}", ja: "いいね {n}" },
-    dislike: { ko: "비추천 {n}", en: "Dislike {n}", zh: "不推荐 {n}", ja: "よくないね {n}" },
+    like: { ko: "추천 {n}", en: "Like {n}", zh: "推荐 {n}", ja: "高評価 {n}" },
+    dislike: { ko: "비추천 {n}", en: "Dislike {n}", zh: "不推荐 {n}", ja: "低評価 {n}" },
     reply: { ko: "답글", en: "Reply", zh: "回复", ja: "返信" },
     reply_ph: { ko: "답글을 남겨 주세요", en: "Write a reply", zh: "写下回复", ja: "返信を書いてください" },
     nick_label: { ko: "닉네임 {n}", en: "Nickname {n}", zh: "昵称 {n}", ja: "ニックネーム {n}" },
@@ -217,12 +217,12 @@
     svg_center: { ko: "글 하나", en: "One post", zh: "一篇帖子", ja: "投稿ひとつ" },
     people_n: { ko: "{n}명", en: "{n}", zh: "{n}人", ja: "{n}人" },
     map_aria: { ko: "확산 지도", en: "Spread map", zh: "传播地图", ja: "拡散マップ" },
-    spread_total: { ko: "지금까지 {p}명이 이 글을 {l}곳으로 보냈어요.", en: "So far {p} people have sent this post to {l} places.", zh: "到目前为止，{p}人把这篇帖子转发到了{l}个地方。", ja: "これまでに{p}人がこの投稿を{l}か所に送りました。" },
+    spread_total: { ko: "지금까지 {p}명이 이 글을 {l}곳으로 보냈어요.", en: "So far {p} {p|person has|people have} sent this post to {l} {l|place|places}.", zh: "到目前为止，{p}人把这篇帖子转发到了{l}个地方。", ja: "これまでに{p}人がこの投稿を{l}か所に送りました。" },
     spread_none_part: { ko: " 안 보낸다는 {n}명이에요.", en: " {n} chose not to send it.", zh: " 选择不转发的有{n}人。", ja: " 送らないと答えた人は{n}人です。" },
     spread_empty: { ko: "아직 아무도 잇지 않았어요.", en: "No one has added to the map yet.", zh: "还没有人连到地图上。", ja: "まだ誰もつないでいません。" },
-    result_total: { ko: "지금까지 {n}명이 참여했어요.", en: "{n} people have taken part so far.", zh: "到目前为止已有{n}人参与。", ja: "これまでに{n}人が参加しました。" },
+    result_total: { ko: "지금까지 {n}명이 참여했어요.", en: "{n} {n|person has|people have} taken part so far.", zh: "到目前为止已有{n}人参与。", ja: "これまでに{n}人が参加しました。" },
     result_empty: { ko: "아직 참여한 사람이 없어요.", en: "No one has taken part yet.", zh: "还没有人参与。", ja: "まだ参加した人はいません。" },
-    bar_title: { ko: "{n}명, {p}%", en: "{n} people, {p}%", zh: "{n}人，{p}%", ja: "{n}人、{p}%" },
+    bar_title: { ko: "{n}명, {p}%", en: "{n} {n|person|people}, {p}%", zh: "{n}人，{p}%", ja: "{n}人、{p}%" },
     after_ok: { ko: "등록했어요. 게시글 댓글 목록에서도 볼 수 있어요.", en: "Posted! You can also see it in the post's comments.", zh: "已发布，也可以在帖子评论区看到。", ja: "投稿しました。投稿のコメント欄でも見られます。" },
     check_closed: { ko: "지금은 쓸 수 없어요.", en: "You can't write right now.", zh: "现在无法填写。", ja: "今は書けません。" },
     check_fail: { ko: "붙이지 못했어요. 잠시 후 다시 시도해 주세요.", en: "Couldn't post the note. Please try again shortly.", zh: "便签贴上失败，请稍后再试。", ja: "貼れませんでした。しばらくしてからもう一度お試しください。" },
@@ -246,7 +246,11 @@
     t: function (key, vars) {
       var e = D[key], s = e ? (e[I.lang] || e.ko) : null;
       if (s == null) return key;
-      if (vars) for (var k in vars) s = s.split("{" + k + "}").join(vars[k]);
+      if (vars) {
+        // 영어 단수, 복수: {n|person|people}
+        s = s.replace(/\{(\w+)\|([^|}]*)\|([^}]*)\}/g, function (m, v, one, many) { return Number(vars[v]) === 1 ? one : many; });
+        for (var k in vars) s = s.split("{" + k + "}").join(vars[k]);
+      }
       return s;
     },
     // data-i18n="키" 붙은 곳의 글을 바꿈. 한국어 원문은 처음 한 번 저장해 뒀다가 돌려놓음
