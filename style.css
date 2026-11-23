@@ -250,3 +250,15 @@ body.intro-open { overflow: hidden; }
 
 #after-mine { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
 .form-msg.ok { color: var(--after); }
+
+/* 언어 바꾸기 */
+.lang { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.lang button { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.lang button.on { color: var(--surface); background: var(--text); border-color: var(--text); }
+/* 댓글, 메모 번역 */
+.tr { display: flex; align-items: center; gap: 8px; margin: 2px 0 6px; flex-wrap: wrap; }
+.tr-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--after); background: none; border: 0; padding: 4px 0; cursor: pointer; }
+.tr-btn:disabled { color: var(--muted); cursor: default; }
+.tr-note { font-size: 12px; color: var(--muted); }
+.notes li .tr { margin: 6px 0 0; }
+.notes li .tr-btn { font-size: 12px; }

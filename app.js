@@ -1,8 +1,10 @@
 // 공유하기 전에 3초 — 캠페인 페이지
 const FIREBASE_VERSION = "10.12.2";
-const LABELS = { share: "공유한다", comment: "댓글만 단다", pass: "그냥 넘긴다", check: "사실을 더 확인한다" };
+const T = (k, v) => window.I18N.t(k, v);
+const LABELS = new Proxy({}, { get: (_, k) => T("ch_" + String(k)) });
 const ORDER = ["share", "comment", "pass", "check"];
-const SPREAD = { group: "단톡방", story: "인스타 스토리", community: "커뮤니티", blog: "블로그", dm: "친구 1:1" };
+const SPREAD_IDS = ["group", "story", "community", "blog", "dm"];
+const SPREAD = new Proxy({}, { get: (_, k) => SPREAD_IDS.includes(k) ? T("sps_" + k) : undefined, ownKeys: () => SPREAD_IDS, getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }) });
 const SPREAD_KEYS = ["group", "story", "community", "blog", "dm", "none"];
 
 /* ---------- 작은 도구 ---------- */
@@ -25,20 +27,51 @@ function el(tag, attrs = {}, ...kids) {
 }
 function timeAgo(ms) {
   const s = Math.max(0, Math.floor((Date.now() - ms) / 1000));
-  if (s < 60) return "방금";
-  if (s < 3600) return Math.floor(s / 60) + "분 전";
-  if (s < 86400) return Math.floor(s / 3600) + "시간 전";
-  return Math.floor(s / 86400) + "일 전";
+  if (s < 60) return T("just_now");
+  if (s < 3600) return T("min_ago", { n: Math.floor(s / 60) });
+  if (s < 86400) return T("hr_ago", { n: Math.floor(s / 3600) });
+  return T("day_ago", { n: Math.floor(s / 86400) });
+}
+
+/* ---------- 번역 ---------- */
+function textWidth(t) {
+  let w = 0;
+  for (const ch of String(t)) w += /[\u1100-\u11ff\u3040-\u30ff\u3130-\u318f\u4e00-\u9fff\uac00-\ud7a3]/.test(ch) ? 1 : 0.58;
+  return Math.max(1, w) * 1;
+}
+const trShown = new Set(); // 번역해서 보고 있는 글
+function translateToggle(id, text, textEl) {
+  const src = window.I18N.detect(text);
+  const lang = window.I18N.lang;
+  if (!src || src === lang) return null;
+  const btn = el("button", { type: "button", class: "tr-btn" });
+  const note = el("span", { class: "tr-note" });
+  const wrap = el("div", { class: "tr" }, btn, note);
+  const key = id + "|" + lang;
+  const showOriginal = () => { textEl.textContent = text; btn.textContent = T("translate"); note.textContent = ""; textEl.classList.remove("translated"); };
+  const showTranslated = out => { textEl.textContent = out; btn.textContent = T("show_original"); note.textContent = T("auto_translated"); textEl.classList.add("translated"); };
+  const run = async () => {
+    btn.disabled = true; btn.textContent = T("translating");
+    try { showTranslated(await window.I18N.translate(text, lang, src)); trShown.add(key); }
+    catch (err) { console.error(err); trShown.delete(key); showOriginal(); note.textContent = T("translate_fail"); }
+    btn.disabled = false;
+  };
+  btn.addEventListener("click", () => {
+    if (trShown.has(key)) { trShown.delete(key); showOriginal(); } else run();
+  });
+  showOriginal();
+  if (trShown.has(key)) run();
+  return wrap;
 }
 
 /* ---------- 글 거르기 ---------- */
 const BAD_WORDS = ["시발", "씨발", "씨빨", "씨바", "시바", "ㅅㅂ", "ㅆㅂ", "병신", "ㅂㅅ", "븅신", "빙신", "개새", "개색", "새끼", "좆", "존나", "ㅈㄴ", "지랄", "ㅈㄹ", "미친놈", "미친년", "엠창", "니애미", "느금", "닥쳐", "꺼져"];
 function checkText(text) {
   const t = text.trim();
-  if (!t) return "내용을 써 주세요.";
+  if (!t) return T("err_empty");
   const squashed = t.replace(/[^\p{L}]/gu, "");
-  if (BAD_WORDS.some(w => squashed.includes(w))) return "욕설이 들어간 글은 올릴 수 없어요.";
-  if (/01[016789][\s.-]?\d{3,4}[\s.-]?\d{4}/.test(t)) return "전화번호 같은 개인정보는 쓸 수 없어요.";
+  if (BAD_WORDS.some(w => squashed.includes(w))) return T("err_bad");
+  if (/01[016789][\s.-]?\d{3,4}[\s.-]?\d{4}/.test(t)) return T("err_phone");
   return null;
 }
 
@@ -194,7 +227,13 @@ const state = {
   lastPost: 0,
 };
 let store;
+let lastResponses = [];
+let spreadPaint = () => {};
 
+function shownNick(n) {
+  const m = /^익명(\d+)$/.exec(n || "");
+  return m ? T("anon_nick", { n: m[1] }) : (n || T("anon"));
+}
 function myNick() {
   let n = local.get("nick", null);
   if (!n) { n = "익명" + String(Math.floor(1000 + Math.random() * 9000)); local.set("nick", n); }
@@ -204,7 +243,7 @@ function myNick() {
 function showError(err) {
   console.error(err);
   const b = $("#demo-banner");
-  b.textContent = "저장 연결에 문제가 생겼어요. 잠시 후 새로고침해 주세요.";
+  b.textContent = T("err_conn");
   b.hidden = false;
 }
 
@@ -249,10 +288,10 @@ function updateGates() {
 
 /* ---------- 댓글 ---------- */
 async function submitComment(text, parentId, msgEl) {
-  if (!state.open) { msgEl.textContent = "지금은 댓글을 쓸 수 없어요."; return false; }
+  if (!state.open) { msgEl.textContent = T("err_closed"); return false; }
   const problem = checkText(text);
   if (problem) { msgEl.textContent = problem; return false; }
-  if (Date.now() - state.lastPost < 5000) { msgEl.textContent = "조금 뒤에 다시 써 주세요."; return false; }
+  if (Date.now() - state.lastPost < 5000) { msgEl.textContent = T("err_wait"); return false; }
   const phase = state.revealed ? "after" : "before";
   try {
     await store.addComment({ text: text.trim(), nick: myNick(), phase, parentId });
@@ -264,7 +303,7 @@ async function submitComment(text, parentId, msgEl) {
     msgEl.textContent = "";
     return true;
   } catch (err) {
-    msgEl.textContent = "등록하지 못했어요. 잠시 후 다시 시도해 주세요.";
+    msgEl.textContent = T("err_post");
     console.error(err);
     return false;
   }
@@ -288,16 +327,18 @@ function commentNode(c, { best = false, isReply = false } = {}) {
   const li = el("li", { class: "comment" });
   li.append(el("div", { class: "c-head" },
     best ? el("span", { class: "c-best", text: "BEST" }) : null,
-    el("span", { class: "c-nick", text: c.nick || "익명" }),
-    el("span", { class: "c-phase " + (c.phase === "after" ? "after" : ""), text: c.phase === "after" ? "맥락 본 후" : "맥락 보기 전" }),
+    el("span", { class: "c-nick", text: shownNick(c.nick) }),
+    el("span", { class: "c-phase " + (c.phase === "after" ? "after" : ""), text: T(c.phase === "after" ? "ph_after" : "ph_before") }),
     el("span", { text: timeAgo(c.createdAt) }),
   ));
   li.append(el("p", { class: "c-text", text: c.text }));
+  const tr = translateToggle(c.id, c.text, $(".c-text", li));
+  if (tr) li.append(tr);
   const actions = el("div", { class: "c-actions" },
-    el("button", { type: "button", class: mine === 1 ? "on-up" : "", text: `추천 ${c.likes || 0}`, onclick: () => doVote(c, 1) }),
-    el("button", { type: "button", class: mine === -1 ? "on-down" : "", text: `비추천 ${c.dislikes || 0}`, onclick: () => doVote(c, -1) }),
+    el("button", { type: "button", class: mine === 1 ? "on-up" : "", text: T("like", { n: c.likes || 0 }), onclick: () => doVote(c, 1) }),
+    el("button", { type: "button", class: mine === -1 ? "on-down" : "", text: T("dislike", { n: c.dislikes || 0 }), onclick: () => doVote(c, -1) }),
   );
-  if (!isReply) actions.append(el("button", { type: "button", text: "답글", onclick: () => toggleReply(li, c) }));
+  if (!isReply) actions.append(el("button", { type: "button", text: T("reply"), onclick: () => toggleReply(li, c) }));
   if (canManage()) {
     actions.append(deleteButton(() => store.deleteComment(c.id)));
   }
@@ -324,10 +365,10 @@ function deleteButton(fn) {
 function toggleReply(li, c) {
   const existing = $(".reply-form", li);
   if (existing) { existing.remove(); return; }
-  const ta = el("textarea", { maxlength: "300", rows: "2", placeholder: "답글을 남겨 주세요" });
+  const ta = el("textarea", { maxlength: "300", rows: "2", placeholder: T("reply_ph") });
   const msg = el("p", { class: "form-msg" });
   const form = el("form", { class: "comment-form reply-form", autocomplete: "off" },
-    ta, el("div", { class: "form-row" }, el("span", { class: "nick-label", text: "닉네임 " + myNick() }), el("button", { type: "submit", class: "btn", text: "등록" })), msg);
+    ta, el("div", { class: "form-row" }, el("span", { class: "nick-label", text: T("nick_label", { n: shownNick(myNick()) }) }), el("button", { type: "submit", class: "btn", text: T("submit") })), msg);
   form.addEventListener("submit", async e => {
     e.preventDefault();
     if (await submitComment(ta.value, c.id, msg)) form.remove();
@@ -358,7 +399,7 @@ function renderComments() {
   const openText = openReply ? $(".reply-form textarea", list).value : "";
 
   list.replaceChildren();
-  if (!sorted.length) { list.append(el("li", { class: "empty", text: "아직 댓글이 없어요. 첫 댓글을 남겨 보세요." })); return; }
+  if (!sorted.length) { list.append(el("li", { class: "empty", text: T("no_comments") })); return; }
   for (const c of sorted) {
     const node = commentNode(c, { best: bestIds.has(c.id) });
     node.dataset.id = c.id;
@@ -374,12 +415,16 @@ function renderComments() {
 }
 
 /* ---------- 확인 메모 ---------- */
+let lastChecks = [];
 function renderChecks(items) {
+  lastChecks = items;
   const list = $("#check-list");
   list.replaceChildren();
   const shown = [...items].sort((a, b) => b.createdAt - a.createdAt).slice(0, 60);
   for (const c of shown) {
-    const li = el("li", { text: c.text });
+    const li = el("li", {}, el("span", { class: "n-text", text: c.text }));
+    const tr = translateToggle("m_" + c.id, c.text, $(".n-text", li));
+    if (tr) li.append(tr);
     if (canManage()) {
       li.append(deleteButton(() => store.deleteCheck(c.id)));
     }
@@ -395,9 +440,10 @@ function bindSpread() {
     $$("button", box).forEach(b => b.classList.toggle("on", picked.has(b.dataset.v)));
     box.classList.toggle("saved", !!state.spread);
     save.disabled = !!state.spread || state.spreadPick.size === 0;
-    save.textContent = state.spread ? "이었어요" : "지도에 잇기";
+    save.textContent = T(state.spread ? "spread_saved" : "spread_save");
     $("#spread-wrap").hidden = !state.spread;
   };
+  spreadPaint = paint;
   box.addEventListener("click", e => {
     const b = e.target.closest("button");
     if (!b || state.spread) return;
@@ -410,14 +456,14 @@ function bindSpread() {
     paint();
   });
   save.addEventListener("click", async () => {
-    if (!state.open) { $("#spread-msg").textContent = "지금은 참여할 수 없어요."; return; }
+    if (!state.open) { $("#spread-msg").textContent = T("spread_closed"); return; }
     const list = SPREAD_KEYS.filter(k => state.spreadPick.has(k));
     if (!list.length) return;
     try {
       await store.saveResponse("spread", list);
       state.spread = list; local.set("spread", list);
       $("#spread-msg").textContent = "";
-    } catch (err) { $("#spread-msg").textContent = "잇지 못했어요. 다시 눌러 주세요."; console.error(err); }
+    } catch (err) { $("#spread-msg").textContent = T("spread_fail"); console.error(err); }
     paint(); updateGates();
   });
   paint();
@@ -431,7 +477,7 @@ function spreadSvg(counts, people, mine) {
   const svg = document.createElementNS(NS, "svg");
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", "확산 지도: " + keys.map(k => `${SPREAD[k]} ${counts[k] || 0}명`).join(", "));
+  svg.setAttribute("aria-label", T("map_aria") + ": " + keys.map(k => `${SPREAD[k]} ${T("people_n", { n: counts[k] || 0 })}`).join(", "));
   const mk = (tag, attrs, text) => {
     const n = document.createElementNS(NS, tag);
     for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
@@ -453,13 +499,14 @@ function spreadSvg(counts, people, mine) {
     mk("line", { x1: cx, y1: cy, x2: p.x, y2: p.y, stroke: c ? red : line, "stroke-width": c ? 2 + 12 * c / max : 1.5, "stroke-linecap": "round", opacity: c ? 0.85 : 1 });
   }
   mk("circle", { cx, cy, r: 30, fill: red });
-  mk("text", { x: cx, y: cy + 5, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "#fff" }, "글 하나");
+  mk("text", { x: cx, y: cy + 5, "text-anchor": "middle", "font-size": Math.min(13, 50 / textWidth(T("svg_center"))), "font-weight": 700, fill: "#fff" }, T("svg_center"));
   for (const p of pos) {
     const c = counts[p.k] || 0;
     const isMine = mine && mine.includes(p.k);
     mk("rect", { x: p.x - 38, y: p.y - 17, width: 76, height: 34, rx: 9, fill: surface, stroke: isMine ? red : line, "stroke-width": isMine ? 2.5 : 1 });
-    mk("text", { x: p.x, y: p.y - 2, "text-anchor": "middle", "font-size": 11.5, "font-weight": 700, fill: text }, SPREAD[p.k]);
-    mk("text", { x: p.x, y: p.y + 12, "text-anchor": "middle", "font-size": 11, fill: muted }, c + "명");
+    const nm = SPREAD[p.k];
+    mk("text", { x: p.x, y: p.y - 2, "text-anchor": "middle", "font-size": Math.min(11.5, 66 / textWidth(nm)), "font-weight": 700, fill: text }, nm);
+    mk("text", { x: p.x, y: p.y + 12, "text-anchor": "middle", "font-size": 11, fill: muted }, T("people_n", { n: c }));
   }
   return svg;
 }
@@ -473,8 +520,8 @@ function renderSpread(responses) {
     if (SPREAD[k]) { counts[k] = (counts[k] || 0) + 1; links++; }
   }
   const msg = withSpread.length
-    ? `지금까지 ${withSpread.length}명이 이 글을 ${links}곳으로 보냈어요.` + (none ? ` 안 보낸다는 ${none}명이에요.` : "")
-    : "아직 아무도 잇지 않았어요.";
+    ? T("spread_total", { p: withSpread.length, l: links }) + (none ? T("spread_none_part", { n: none }) : "")
+    : T("spread_empty");
   for (const [mapId, totalId] of [["#spread-map", "#spread-total"], ["#result-map", "#result-spread-total"]]) {
     $(mapId).replaceChildren(spreadSvg(counts, withSpread.length, state.spread));
     $(totalId).textContent = msg;
@@ -486,7 +533,7 @@ function renderResults(responses) {
   const before = responses.filter(r => r.before);
   const after = responses.filter(r => r.after);
   const total = Math.max(before.length, after.length);
-  $("#result-total").textContent = total ? `지금까지 ${total}명이 참여했어요.` : "아직 참여한 사람이 없어요.";
+  $("#result-total").textContent = total ? T("result_total", { n: total }) : T("result_empty");
   const box = $("#result-bars");
   box.replaceChildren();
   for (const k of ORDER) {
@@ -496,8 +543,8 @@ function renderResults(responses) {
     const pa = after.length ? Math.round(a / after.length * 100) : 0;
     box.append(el("div", {},
       el("div", { class: "bar-label", text: LABELS[k] }),
-      barRow("before", pb, `${b}명, ${pb}%`),
-      barRow("after", pa, `${a}명, ${pa}%`),
+      barRow("before", pb, T("bar_title", { n: b, p: pb })),
+      barRow("after", pa, T("bar_title", { n: a, p: pa })),
     ));
   }
 }
@@ -579,7 +626,7 @@ async function start() {
     catch (err) {
       console.error(err);
       store = new LocalStore(); await store.init();
-      $("#demo-banner").textContent = "저장 연결에 실패해서 시험 모드로 열렸어요. 댓글이 이 기기에만 저장돼요.";
+      $("#demo-banner").textContent = T("demo_fail");
       $("#demo-banner").hidden = false;
     }
   } else {
@@ -587,7 +634,7 @@ async function start() {
     $("#demo-banner").hidden = false;
   }
 
-  $$(".my-nick").forEach(n => { n.textContent = myNick(); });
+  $$(".my-nick").forEach(n => { n.textContent = shownNick(myNick()); });
   bindChoices("#first-choices", "first");
   bindChoices("#second-choices", "second");
   bindSpread();
@@ -596,8 +643,15 @@ async function start() {
   store.onSettings(applySettings);
   store.onComments(list => { state.comments = list; renderComments(); renderCommentStats(); });
   store.onChecks(renderChecks);
-  store.onResponses(list => { renderResults(list); renderSpread(list); });
+  store.onResponses(list => { lastResponses = list; renderResults(list); renderSpread(list); });
   setupAdmin();
+  window.addEventListener("langchange", () => {
+    renderComments(); renderChecks(lastChecks); renderResults(lastResponses); renderSpread(lastResponses); spreadPaint();
+    $("#mine-choice").textContent = state.first ? LABELS[state.first] : "-";
+    $("#mine-comment").textContent = state.firstComment || T("mine_none");
+    $$(".reply-form .nick-label").forEach(n => { n.textContent = T("nick_label", { n: shownNick(myNick()) }); });
+    $$(".my-nick").forEach(n => { n.textContent = shownNick(myNick()); });
+  });
 
   $("#comment-form").addEventListener("submit", async e => {
     e.preventDefault();
@@ -617,17 +671,17 @@ async function start() {
       ta.value = "";
       state.afterComment = text.trim(); local.set("afterComment", state.afterComment);
       showAfterMine();
-      msg.textContent = "등록했어요. 게시글 댓글 목록에서도 볼 수 있어요."; msg.classList.add("ok");
+      msg.textContent = T("after_ok"); msg.classList.add("ok");
     }
   });
   $("#check-form").addEventListener("submit", async e => {
     e.preventDefault();
     const ta = $("#check-text"), msg = $("#check-msg");
-    if (!state.open) { msg.textContent = "지금은 쓸 수 없어요."; return; }
+    if (!state.open) { msg.textContent = T("check_closed"); return; }
     const problem = checkText(ta.value);
     if (problem) { msg.textContent = problem; return; }
     try { await store.addCheck({ text: ta.value.trim(), nick: myNick() }); ta.value = ""; msg.textContent = ""; }
-    catch (err) { msg.textContent = "붙이지 못했어요. 잠시 후 다시 시도해 주세요."; console.error(err); }
+    catch (err) { msg.textContent = T("check_fail"); console.error(err); }
   });
   $$(".tab").forEach(t => t.addEventListener("click", () => {
     state.sort = t.dataset.sort;
@@ -641,7 +695,7 @@ async function start() {
   });
   $("#go-again").addEventListener("click", () => {
     $("#mine-choice").textContent = state.first ? LABELS[state.first] : "-";
-    $("#mine-comment").textContent = state.firstComment || "댓글을 쓰지 않았어요";
+    $("#mine-comment").textContent = state.firstComment || T("mine_none");
     go(3);
   });
   $("#go-result").addEventListener("click", () => go(4));

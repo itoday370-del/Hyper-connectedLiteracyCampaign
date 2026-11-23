@@ -7,33 +7,37 @@
   <meta name="description" content="소설 「후원 명세서」로 만든 초연결사회 맥락 확인 캠페인">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=13">
+  <script src="i18n.js?v=13"></script>
 </head>
 <body>
   <div id="intro" class="intro" role="dialog" aria-label="소개 영상" hidden>
     <video id="intro-video" src="media/intro.mp4?v=6" poster="media/intro-poster.jpg" playsinline preload="auto"></video>
-    <button type="button" id="intro-tap" class="intro-tap" hidden><span class="intro-play">▶</span><b>화면을 눌러 시작하기</b><small>소리가 나와요</small></button>
+    <button type="button" id="intro-tap" class="intro-tap" data-i18n="intro_tap" hidden><span class="intro-play">▶</span><b>화면을 눌러 시작하기</b><small>소리가 나와요</small></button>
     <div class="intro-bar"><span id="intro-progress"></span></div>
     <div class="intro-controls">
       <button type="button" id="intro-sound" class="intro-btn">🔇 소리 켜기</button>
-      <button type="button" id="intro-skip" class="intro-btn intro-skip">건너뛰기 ›</button>
+      <button type="button" id="intro-skip" class="intro-btn intro-skip" data-i18n="intro_skip">건너뛰기 ›</button>
     </div>
   </div>
-  <div id="demo-banner" class="banner" hidden>시험 모드예요. 댓글이 이 기기에만 저장돼요.</div>
-  <div id="closed-banner" class="banner banner-closed" hidden>캠페인이 끝나서 지금은 댓글을 쓸 수 없어요.</div>
+  <div id="demo-banner" class="banner" data-i18n="demo_banner" hidden>시험 모드예요. 댓글이 이 기기에만 저장돼요.</div>
+  <div id="closed-banner" class="banner banner-closed" data-i18n="closed_banner" hidden>캠페인이 끝나서 지금은 댓글을 쓸 수 없어요.</div>
 
   <header class="top">
     <div class="wrap">
-      <p class="eyebrow">초연결사회 캠페인 · 「후원 명세서」</p>
-      <h1>공유하기 전에 3초</h1>
-      <p class="lead">한 편의 글을 읽고, 반응하고, 그다음에 전체 이야기를 확인해 보세요.</p>
-      <button type="button" id="intro-replay" class="intro-replay">▶ 소개 영상 다시 보기</button>
-      <p class="booth-start">시작하기 전에 부스의 스티커 판(5점 척도)에 <b class="red">빨간 스티커</b>를 먼저 붙여 주세요.</p>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="ko">한국어</button><button type="button" data-lang="en">English</button><button type="button" data-lang="zh">中文</button><button type="button" data-lang="ja">日本語</button>
+      </div>
+      <p class="eyebrow" data-i18n="eyebrow">초연결사회 캠페인 · 「후원 명세서」</p>
+      <h1 data-i18n="h1">공유하기 전에 3초</h1>
+      <p class="lead" data-i18n="lead">한 편의 글을 읽고, 반응하고, 그다음에 전체 이야기를 확인해 보세요.</p>
+      <button type="button" id="intro-replay" class="intro-replay" data-i18n="intro_replay">▶ 소개 영상 다시 보기</button>
+      <p class="booth-start" data-i18n="booth_start">시작하기 전에 부스의 스티커 판(5점 척도)에 <b class="red">빨간 스티커</b>를 먼저 붙여 주세요.</p>
       <ol class="steps" aria-label="진행 단계">
-        <li data-step="1" class="on"><span>1</span>글 읽기</li>
-        <li data-step="2"><span>2</span>맥락 보기</li>
-        <li data-step="3"><span>3</span>다시 보기</li>
-        <li data-step="4"><span>4</span>결과</li>
+        <li data-step="1" class="on" data-i18n="step1"><span>1</span>글 읽기</li>
+        <li data-step="2" data-i18n="step2"><span>2</span>맥락 보기</li>
+        <li data-step="3" data-i18n="step3"><span>3</span>다시 보기</li>
+        <li data-step="4" data-i18n="step4"><span>4</span>결과</li>
       </ol>
     </div>
   </header>
@@ -42,41 +46,41 @@
 
     <!-- STEP 1 -->
     <section id="step1" class="step">
-      <p class="note">소설 「후원 명세서」(오선영) 속 게시글 내용을 바탕으로 다시 쓴 글이에요.</p>
+      <p class="note" data-i18n="note_source">소설 「후원 명세서」(오선영) 속 게시글 내용을 바탕으로 다시 쓴 글이에요.</p>
 
       <article class="post">
-        <div class="post-board">커뮤니티 &gt; 사는 이야기 <span class="badge">조회수 1위</span></div>
-        <h2 class="post-title">5년 동안 후원한 아이한테 속물 취급 당했습니다</h2>
-        <div class="post-meta"><span>익명</span><span>조회 148,203</span><span>추천 3,917</span></div>
+        <div class="post-board" data-i18n="post_board">커뮤니티 &gt; 사는 이야기 <span class="badge">조회수 1위</span></div>
+        <h2 class="post-title" data-i18n="post_title">5년 동안 후원한 아이한테 속물 취급 당했습니다</h2>
+        <div class="post-meta" data-i18n="post_meta"><span>익명</span><span>조회 148,203</span><span>추천 3,917</span></div>
         <div class="post-body">
-          <p>30대 중반 평범한 회사원입니다. 5년째 한 아이를 후원하고 있어요. 처음엔 한 달 3만 원이었고 올해부터는 5만 원으로 올렸습니다.</p>
-          <p>키다리 아저씨처럼 조용히 돕고 싶어서 아이한테 따로 연락도 안 했습니다.</p>
-          <p>이번 어린이날을 앞두고 처음으로 선물을 해 주고 싶어서 원하는 걸 물어봤습니다. 그런데 돌아온 답이 월드컵 한정판 빨간 나이키 운동화. 30만 원이 넘는 신발이더군요.</p>
-          <p>기초수급 받는 아이가 이런 신발 이름을 어떻게 아는지 놀라서 담당자한테 다시 확인했습니다. 담당자는 아이가 원하는 게 맞다면서 선물은 안 하셔도 된다고 하더군요.</p>
-          <p>5년 동안 꼬박꼬박 후원한 사람을 이렇게 속물 취급하나요?</p>
+          <p data-i18n="post_p1">30대 중반 평범한 회사원입니다. 5년째 한 아이를 후원하고 있어요. 처음엔 한 달 3만 원이었고 올해부터는 5만 원으로 올렸습니다.</p>
+          <p data-i18n="post_p2">키다리 아저씨처럼 조용히 돕고 싶어서 아이한테 따로 연락도 안 했습니다.</p>
+          <p data-i18n="post_p3">이번 어린이날을 앞두고 처음으로 선물을 해 주고 싶어서 원하는 걸 물어봤습니다. 그런데 돌아온 답이 월드컵 한정판 빨간 나이키 운동화. 30만 원이 넘는 신발이더군요.</p>
+          <p data-i18n="post_p4">기초수급 받는 아이가 이런 신발 이름을 어떻게 아는지 놀라서 담당자한테 다시 확인했습니다. 담당자는 아이가 원하는 게 맞다면서 선물은 안 하셔도 된다고 하더군요.</p>
+          <p data-i18n="post_p5">5년 동안 꼬박꼬박 후원한 사람을 이렇게 속물 취급하나요?</p>
         </div>
       </article>
 
       <div class="card">
-        <h3>이 글을 본 지금, 나라면?</h3>
+        <h3 data-i18n="q_now">이 글을 본 지금, 나라면?</h3>
         <div class="choices" id="first-choices">
-          <button type="button" data-v="share">공유한다</button>
-          <button type="button" data-v="comment">댓글만 단다</button>
-          <button type="button" data-v="pass">그냥 넘긴다</button>
-          <button type="button" data-v="check">사실을 더 확인한다</button>
+          <button type="button" data-v="share" data-i18n="ch_share">공유한다</button>
+          <button type="button" data-v="comment" data-i18n="ch_comment">댓글만 단다</button>
+          <button type="button" data-v="pass" data-i18n="ch_pass">그냥 넘긴다</button>
+          <button type="button" data-v="check" data-i18n="ch_check">사실을 더 확인한다</button>
         </div>
       </div>
 
       <div class="card">
-        <h3>나라면 이 글을 어디로 보냈을까?</h3>
-        <p class="sub">여러 개 골라도 돼요. 고르고 '지도에 잇기'를 누르면 모두의 선택이 쌓인 확산 지도가 나와요.</p>
+        <h3 data-i18n="q_where">나라면 이 글을 어디로 보냈을까?</h3>
+        <p class="sub" data-i18n="where_sub">여러 개 골라도 돼요. 고르고 '지도에 잇기'를 누르면 모두의 선택이 쌓인 확산 지도가 나와요.</p>
         <div class="choices spread-choices" id="spread-choices">
-          <button type="button" data-v="group">단톡방</button>
-          <button type="button" data-v="story">인스타 스토리</button>
-          <button type="button" data-v="community">커뮤니티 게시판</button>
-          <button type="button" data-v="blog">블로그</button>
-          <button type="button" data-v="dm">친구에게 1:1</button>
-          <button type="button" data-v="none">안 보낸다</button>
+          <button type="button" data-v="group" data-i18n="sp_group">단톡방</button>
+          <button type="button" data-v="story" data-i18n="sp_story">인스타 스토리</button>
+          <button type="button" data-v="community" data-i18n="sp_community">커뮤니티 게시판</button>
+          <button type="button" data-v="blog" data-i18n="sp_blog">블로그</button>
+          <button type="button" data-v="dm" data-i18n="sp_dm">친구에게 1:1</button>
+          <button type="button" data-v="none" data-i18n="sp_none">안 보낸다</button>
         </div>
         <div class="form-row"><span class="nick-label" id="spread-msg"></span><button type="button" class="btn" id="spread-save" disabled>지도에 잇기</button></div>
         <div id="spread-wrap" hidden>
@@ -86,168 +90,168 @@
       </div>
 
       <div class="card">
-        <h3>댓글 <span class="count" id="comment-count">0</span></h3>
+        <h3><span data-i18n="comments">댓글</span> <span class="count" id="comment-count">0</span></h3>
         <form class="comment-form" id="comment-form" autocomplete="off">
-          <textarea id="comment-text" maxlength="300" rows="3" placeholder="이 글을 보고 떠오른 생각을 한 줄 남겨 주세요"></textarea>
+          <textarea id="comment-text" maxlength="300" rows="3" placeholder="이 글을 보고 떠오른 생각을 한 줄 남겨 주세요" data-i18n-ph="comment_ph"></textarea>
           <div class="form-row">
-            <span class="nick-label">닉네임 <b class="my-nick"></b></span>
-            <button type="submit" class="btn">등록</button>
+            <span class="nick-label"><span data-i18n="nick">닉네임</span> <b class="my-nick"></b></span>
+            <button type="submit" class="btn" data-i18n="submit">등록</button>
           </div>
           <p class="form-msg" id="comment-msg" role="status"></p>
         </form>
         <div class="tabs" role="tablist">
-          <button type="button" class="tab on" data-sort="best">베스트</button>
-          <button type="button" class="tab" data-sort="new">최신</button>
+          <button type="button" class="tab on" data-sort="best" data-i18n="tab_best">베스트</button>
+          <button type="button" class="tab" data-sort="new" data-i18n="tab_new">최신</button>
         </div>
         <ul class="comments" id="comment-list"></ul>
       </div>
 
       <div class="next">
-        <button type="button" class="btn btn-big" id="go-context" disabled>전체 맥락 보기</button>
-        <p class="hint" id="go-hint">'나라면?'을 고르고 확산 지도에 이어 주세요</p>
+        <button type="button" class="btn btn-big" id="go-context" disabled data-i18n="go_context">전체 맥락 보기</button>
+        <p class="hint" id="go-hint" data-i18n="go_hint">'나라면?'을 고르고 확산 지도에 이어 주세요</p>
       </div>
     </section>
 
     <!-- STEP 2 -->
     <section id="step2" class="step" hidden>
-      <h2 class="step-title">게시글에 없던 이야기</h2>
-      <p class="sub">소설 「후원 명세서」에서 게시글 밖에 있던 장면들이에요.</p>
+      <h2 class="step-title" data-i18n="step2_title">게시글에 없던 이야기</h2>
+      <p class="sub" data-i18n="step2_sub">소설 「후원 명세서」에서 게시글 밖에 있던 장면들이에요.</p>
 
       <div class="reveal">
         <div class="reveal-item">
-          <p class="tag">선물은 누가 먼저 꺼냈나</p>
-          <p>원하는 선물을 말해 보라고 한 건 후원자였어요. 아이는 나중에 이렇게 말해요.</p>
-          <blockquote>"진짜 필요한 거 말하라고 해서 말한 건데."</blockquote>
+          <p class="tag" data-i18n="rv1_tag">선물은 누가 먼저 꺼냈나</p>
+          <p data-i18n="rv1_p">원하는 선물을 말해 보라고 한 건 후원자였어요. 아이는 나중에 이렇게 말해요.</p>
+          <blockquote data-i18n="rv1_q">"진짜 필요한 거 말하라고 해서 말한 건데."</blockquote>
         </div>
         <div class="reveal-item">
-          <p class="tag">후원자가 그동안 요구한 것</p>
-          <p>담당자에 따르면 이 후원자는 전부터 아이를 자선 파티에 보내 달라, 아이 속옷 사이즈를 알려 달라, 지출 명세서를 팩스로 보내 달라고 요구해 왔어요.</p>
+          <p class="tag" data-i18n="rv2_tag">후원자가 그동안 요구한 것</p>
+          <p data-i18n="rv2_p">담당자에 따르면 이 후원자는 전부터 아이를 자선 파티에 보내 달라, 아이 속옷 사이즈를 알려 달라, 지출 명세서를 팩스로 보내 달라고 요구해 왔어요.</p>
         </div>
         <div class="reveal-item">
-          <p class="tag">담당자</p>
-          <p>입사 6개월 차인 담당자는 아이가 원한 것을 그대로 전했을 뿐이에요.</p>
-          <blockquote>"애가 좋아하는 거 주고 싶었어요."</blockquote>
+          <p class="tag" data-i18n="rv3_tag">담당자</p>
+          <p data-i18n="rv3_p">입사 6개월 차인 담당자는 아이가 원한 것을 그대로 전했을 뿐이에요.</p>
+          <blockquote data-i18n="rv3_q">"애가 좋아하는 거 주고 싶었어요."</blockquote>
         </div>
         <div class="reveal-item">
-          <p class="tag">글이 퍼진 뒤</p>
-          <p>글은 조회수 1위가 되고 카페, 블로그, SNS로 퍼져요. 재단 홈페이지는 접속이 몰려 마비되고, 댓글은 아이를 욕하는 쪽과 담당자를 탓하는 쪽으로 갈려요. 후원자는 나중에 원글을 지웠어요.</p>
+          <p class="tag" data-i18n="rv4_tag">글이 퍼진 뒤</p>
+          <p data-i18n="rv4_p">글은 조회수 1위가 되고 카페, 블로그, SNS로 퍼져요. 재단 홈페이지는 접속이 몰려 마비되고, 댓글은 아이를 욕하는 쪽과 담당자를 탓하는 쪽으로 갈려요. 후원자는 나중에 원글을 지웠어요.</p>
         </div>
         <div class="reveal-item">
-          <p class="tag">그 아이는</p>
-          <p>아이는 게시글과 댓글을 이미 다 알고 있었어요. 결국 할머니 휠체어 수리비로 모으던 아르바이트비에 아르바이트를 더 해서 그 운동화를 자기 돈으로 샀어요.</p>
+          <p class="tag" data-i18n="rv5_tag">그 아이는</p>
+          <p data-i18n="rv5_p">아이는 게시글과 댓글을 이미 다 알고 있었어요. 결국 할머니 휠체어 수리비로 모으던 아르바이트비에 아르바이트를 더 해서 그 운동화를 자기 돈으로 샀어요.</p>
         </div>
       </div>
 
       <div class="real">
-        <p class="real-label">소설에만 있는 일이 아니에요</p>
-        <h3>2017년 '20만 원짜리 점퍼를 요구한 후원 아동' 글</h3>
-        <p>2017년 12월, 한 후원자가 "후원 아동이 20만 원짜리 점퍼를 요구했다"는 글을 온라인 게시판에 올렸어요. 후원자는 하루쯤 뒤 글을 지웠지만 글은 이미 다른 카페와 커뮤니티로 퍼진 뒤였어요. 재단이 입장문에서 밝힌 내용은 이래요.</p>
+        <p class="real-label" data-i18n="real_label">소설에만 있는 일이 아니에요</p>
+        <h3 data-i18n="real_h3">2017년 '20만 원짜리 점퍼를 요구한 후원 아동' 글</h3>
+        <p data-i18n="real_p">2017년 12월, 한 후원자가 "후원 아동이 20만 원짜리 점퍼를 요구했다"는 글을 온라인 게시판에 올렸어요. 후원자는 하루쯤 뒤 글을 지웠지만 글은 이미 다른 카페와 커뮤니티로 퍼진 뒤였어요. 재단이 입장문에서 밝힌 내용은 이래요.</p>
         <ul class="real-list">
-          <li>후원자가 보낸 편지에는 "특별히 원하는 것 없으면 요새 유행하는 롱패딩 잠바 보내주려고 하는데, 괜찮니?"라는 말이 있었어요. 롱패딩을 먼저 꺼낸 건 후원자였어요.</li>
-          <li>아이는 친구들에게 요즘 유행하는 브랜드를 물어보고 금액 제한을 모른 채 제품을 골랐어요.</li>
-          <li>재단은 브랜드명을 거르지 않고 그대로 전달한 것이 업무상 실수였다고 밝혔어요.</li>
-          <li>처음 올라온 글에는 아이의 실명이 그대로 보여서 아이의 개인정보 노출과 인권 침해가 걱정되는 상황이었어요.</li>
+          <li data-i18n="real_li1">후원자가 보낸 편지에는 "특별히 원하는 것 없으면 요새 유행하는 롱패딩 잠바 보내주려고 하는데, 괜찮니?"라는 말이 있었어요. 롱패딩을 먼저 꺼낸 건 후원자였어요.</li>
+          <li data-i18n="real_li2">아이는 친구들에게 요즘 유행하는 브랜드를 물어보고 금액 제한을 모른 채 제품을 골랐어요.</li>
+          <li data-i18n="real_li3">재단은 브랜드명을 거르지 않고 그대로 전달한 것이 업무상 실수였다고 밝혔어요.</li>
+          <li data-i18n="real_li4">처음 올라온 글에는 아이의 실명이 그대로 보여서 아이의 개인정보 노출과 인권 침해가 걱정되는 상황이었어요.</li>
         </ul>
-        <p class="source">출처: 초록우산어린이재단, 「20만원짜리 점퍼를 요구한 후원아동 - 해당 글 관련한 본 단체의 입장문입니다」, 2017.12.11.</p>
+        <p class="source" data-i18n="source">출처: 초록우산어린이재단, 「20만원짜리 점퍼를 요구한 후원아동 - 해당 글 관련한 본 단체의 입장문입니다」, 2017.12.11.</p>
       </div>
 
       <div class="next">
-        <button type="button" class="btn btn-big" id="go-again">내 처음 반응 다시 보기</button>
+        <button type="button" class="btn btn-big" id="go-again" data-i18n="go_again">내 처음 반응 다시 보기</button>
       </div>
     </section>
 
     <!-- STEP 3 -->
     <section id="step3" class="step" hidden>
-      <h2 class="step-title">처음의 나를 다시 보기</h2>
+      <h2 class="step-title" data-i18n="step3_title">처음의 나를 다시 보기</h2>
 
       <div class="card mine">
-        <p class="mine-label">처음 고른 반응</p>
+        <p class="mine-label" data-i18n="mine_choice_label">처음 고른 반응</p>
         <p class="mine-value" id="mine-choice">-</p>
-        <p class="mine-label">처음 쓴 댓글</p>
+        <p class="mine-label" data-i18n="mine_comment_label">처음 쓴 댓글</p>
         <p class="mine-value" id="mine-comment">댓글을 쓰지 않았어요</p>
       </div>
 
       <div class="card">
-        <h3>전체 이야기를 안 지금, 댓글을 다시 쓴다면?</h3>
-        <p class="sub">여기 쓴 댓글은 게시글 댓글 목록에 '맥락 본 후' 표시로 올라가요.</p>
+        <h3 data-i18n="after_h3">전체 이야기를 안 지금, 댓글을 다시 쓴다면?</h3>
+        <p class="sub" data-i18n="after_sub">여기 쓴 댓글은 게시글 댓글 목록에 '맥락 본 후' 표시로 올라가요.</p>
         <form class="comment-form" id="after-form" autocomplete="off">
-          <textarea id="after-text" maxlength="300" rows="3" placeholder="처음 댓글과 생각이 달라졌다면 지금 생각을 남겨 주세요"></textarea>
+          <textarea id="after-text" maxlength="300" rows="3" placeholder="처음 댓글과 생각이 달라졌다면 지금 생각을 남겨 주세요" data-i18n-ph="after_ph"></textarea>
           <div class="form-row">
-            <span class="nick-label">닉네임 <b class="my-nick"></b></span>
-            <button type="submit" class="btn">등록</button>
+            <span class="nick-label"><span data-i18n="nick">닉네임</span> <b class="my-nick"></b></span>
+            <button type="submit" class="btn" data-i18n="submit">등록</button>
           </div>
           <p class="form-msg" id="after-msg" role="status"></p>
         </form>
         <div id="after-mine" hidden>
-          <p class="mine-label">맥락 본 후 쓴 댓글</p>
+          <p class="mine-label" data-i18n="after_mine_label">맥락 본 후 쓴 댓글</p>
           <p class="mine-value" id="after-mine-text"></p>
         </div>
       </div>
 
       <div class="card">
-        <h3>전체 이야기를 안 지금, 다시 고른다면?</h3>
+        <h3 data-i18n="q_again">전체 이야기를 안 지금, 다시 고른다면?</h3>
         <div class="choices" id="second-choices">
-          <button type="button" data-v="share">공유한다</button>
-          <button type="button" data-v="comment">댓글만 단다</button>
-          <button type="button" data-v="pass">그냥 넘긴다</button>
-          <button type="button" data-v="check">사실을 더 확인한다</button>
+          <button type="button" data-v="share" data-i18n="ch_share">공유한다</button>
+          <button type="button" data-v="comment" data-i18n="ch_comment">댓글만 단다</button>
+          <button type="button" data-v="pass" data-i18n="ch_pass">그냥 넘긴다</button>
+          <button type="button" data-v="check" data-i18n="ch_check">사실을 더 확인한다</button>
         </div>
       </div>
 
       <div class="card">
-        <h3>공유하기 전에 확인할 것 한 가지</h3>
-        <p class="sub">다른 사람들에게 남기는 메모예요.</p>
+        <h3 data-i18n="check_h3">공유하기 전에 확인할 것 한 가지</h3>
+        <p class="sub" data-i18n="check_sub">다른 사람들에게 남기는 메모예요.</p>
         <form class="comment-form" id="check-form" autocomplete="off">
-          <textarea id="check-text" maxlength="100" rows="2" placeholder="예: 글쓴이 말고 다른 쪽 이야기도 있는지"></textarea>
-          <div class="form-row"><span></span><button type="submit" class="btn">붙이기</button></div>
+          <textarea id="check-text" maxlength="100" rows="2" placeholder="예: 글쓴이 말고 다른 쪽 이야기도 있는지" data-i18n-ph="check_ph"></textarea>
+          <div class="form-row"><span></span><button type="submit" class="btn" data-i18n="attach">붙이기</button></div>
           <p class="form-msg" id="check-msg" role="status"></p>
         </form>
         <ul class="notes" id="check-list"></ul>
       </div>
 
       <div class="next">
-        <button type="button" class="btn btn-big" id="go-result" disabled>결과 보기</button>
-        <p class="hint" id="result-hint">'다시 고른다면?'을 골라 주세요</p>
+        <button type="button" class="btn btn-big" id="go-result" disabled data-i18n="go_result">결과 보기</button>
+        <p class="hint" id="result-hint" data-i18n="result_hint">'다시 고른다면?'을 골라 주세요</p>
       </div>
     </section>
 
     <!-- STEP 4 -->
     <section id="step4" class="step" hidden>
-      <h2 class="step-title">우리의 반응은 이렇게 바뀌었어요</h2>
+      <h2 class="step-title" data-i18n="step4_title">우리의 반응은 이렇게 바뀌었어요</h2>
       <p class="sub" id="result-total"></p>
 
       <div class="card">
-        <div class="legend"><span class="lg lg-before">맥락 보기 전</span><span class="lg lg-after">맥락 본 후</span></div>
+        <div class="legend"><span class="lg lg-before" data-i18n="lg_before">맥락 보기 전</span><span class="lg lg-after" data-i18n="lg_after">맥락 본 후</span></div>
         <div id="result-bars" class="bars"></div>
       </div>
 
       <div class="card">
-        <h3>모두가 만든 확산 지도</h3>
+        <h3 data-i18n="map_h3">모두가 만든 확산 지도</h3>
         <div class="spread-map" id="result-map"></div>
         <p class="sub center" id="result-spread-total"></p>
       </div>
 
       <div class="card">
-        <h3>댓글로 본 변화</h3>
+        <h3 data-i18n="change_h3">댓글로 본 변화</h3>
         <div class="stat-row">
-          <div class="stat"><b id="stat-before">0</b><span>맥락 보기 전 댓글</span></div>
-          <div class="stat"><b id="stat-after">0</b><span>맥락 본 후 댓글</span></div>
+          <div class="stat"><b id="stat-before">0</b><span data-i18n="stat_before">맥락 보기 전 댓글</span></div>
+          <div class="stat"><b id="stat-after">0</b><span data-i18n="stat_after">맥락 본 후 댓글</span></div>
         </div>
       </div>
 
       <div class="card booth">
-        <h3>마지막으로 부스에서</h3>
-        <p>1. 같은 스티커 판에 이번에는 <b class="blue">파란 스티커</b>를 붙여 주세요.</p>
-        <p>2. 이 결과 화면을 보여 주면 간식을 드려요.</p>
+        <h3 data-i18n="booth_h3">마지막으로 부스에서</h3>
+        <p data-i18n="booth_p1">1. 같은 스티커 판에 이번에는 <b class="blue">파란 스티커</b>를 붙여 주세요.</p>
+        <p data-i18n="booth_p2">2. 이 결과 화면을 보여 주면 간식을 드려요.</p>
       </div>
 
       <div class="closing">
-        <p>초연결사회에서는 글 하나가 하루 만에 수많은 사람에게 닿아요. 쓴 사람이 글을 지워도 이미 퍼진 글과 댓글은 남고, 그 무게는 이름이 드러난 아이가 가장 먼저 받아요.</p>
-        <p><b>공유하기 전에 3초.</b> 이 글에 빠진 이야기는 없는지, 이 글이 누구에게 닿을지 한 번만 생각해 주세요.</p>
+        <p data-i18n="closing_p1">초연결사회에서는 글 하나가 하루 만에 수많은 사람에게 닿아요. 쓴 사람이 글을 지워도 이미 퍼진 글과 댓글은 남고, 그 무게는 이름이 드러난 아이가 가장 먼저 받아요.</p>
+        <p data-i18n="closing_p2"><b>공유하기 전에 3초.</b> 이 글에 빠진 이야기는 없는지, 이 글이 누구에게 닿을지 한 번만 생각해 주세요.</p>
       </div>
 
       <div class="next">
-        <button type="button" class="btn btn-ghost" id="go-back-post">게시글과 댓글 다시 보기</button>
+        <button type="button" class="btn btn-ghost" id="go-back-post" data-i18n="go_back_post">게시글과 댓글 다시 보기</button>
       </div>
     </section>
 
@@ -267,10 +271,11 @@
   </main>
 
   <footer class="foot wrap">
-    <p>오선영, 「후원 명세서」 · 초록우산어린이재단 입장문(2017.12.11)</p>
-    <p>개인정보(이름, 학교, 연락처)는 쓰지 말아 주세요.</p>
+    <p data-i18n="foot_source">오선영, 「후원 명세서」 · 초록우산어린이재단 입장문(2017.12.11)</p>
+    <p data-i18n="foot_privacy">개인정보(이름, 학교, 연락처)는 쓰지 말아 주세요.</p>
   </footer>
 
+  <script>window.I18N.apply();</script>
   <script>
   (function () {
     var box = document.getElementById("intro"), v = document.getElementById("intro-video");
@@ -280,7 +285,7 @@
     var KEY = "c3_introSeen";
     function seen() { try { return localStorage.getItem(KEY) === "true"; } catch (e) { return false; } }
     function mark() { try { localStorage.setItem(KEY, "true"); } catch (e) {} }
-    function label() { sound.textContent = v.muted ? "🔇 소리 켜기" : "🔊 음소거"; }
+    function label() { sound.textContent = window.I18N.t(v.muted ? "intro_sound_on" : "intro_mute"); }
     function close() {
       mark(); v.pause(); tap.hidden = true; box.classList.add("intro-out");
       setTimeout(function () { box.hidden = true; box.classList.remove("intro-out"); document.body.classList.remove("intro-open"); }, 350);
@@ -321,7 +326,7 @@
     els.forEach(function (el) { io.observe(el); });
   })();
   </script>
-  <script src="config.js?v=5"></script>
-  <script type="module" src="app.js?v=10"></script>
+  <script src="config.js?v=13"></script>
+  <script type="module" src="app.js?v=13"></script>
 </body>
 </html>
