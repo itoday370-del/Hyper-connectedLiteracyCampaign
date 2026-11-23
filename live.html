@@ -14,7 +14,7 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; overflow: hidden; }
-  .wrap { height: 100vh; padding: 2.6vh 2.4vw; display: grid; grid-template-rows: auto 1fr; gap: 2.2vh; }
+  .wrap { height: 100vh; padding: 2.4vh 2vw; display: grid; grid-template-rows: auto auto 1fr; gap: 2vh; }
   header { display: flex; align-items: center; justify-content: space-between; gap: 2vw; }
   .brand { display: flex; align-items: baseline; gap: 1.4vw; }
   .brand h1 { margin: 0; font-size: 5.4vh; font-weight: 900; letter-spacing: -0.1vh; }
@@ -28,18 +28,18 @@
   .join b { display: block; font-size: 2.8vh; }
   .join small { display: block; font-size: 2vh; color: var(--muted); margin-top: 0.4vh; }
 
-  main { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2vw; min-height: 0; }
+  main { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 1.4vw; min-height: 0; }
   .col { display: flex; flex-direction: column; gap: 2.2vh; min-height: 0; }
-  .panel { background: var(--panel); border-radius: 2.2vh; padding: 2.4vh 1.8vw; min-height: 0; }
-  .panel h2 { margin: 0 0 1.6vh; font-size: 2.8vh; font-weight: 800; display: flex; align-items: baseline; justify-content: space-between; gap: 1vw; }
+  .panel { background: var(--panel); border-radius: 2.2vh; padding: 2.2vh 1.6vw 1.8vh; min-height: 0; }
+  .panel h2 { margin: 0 0 1.2vh; font-size: 2.8vh; font-weight: 800; display: flex; align-items: baseline; justify-content: space-between; gap: 1vw; }
   .panel h2 small { font-size: 2vh; color: var(--muted); font-weight: 600; }
 
-  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4vw; }
-  .stat { background: var(--panel); border-radius: 2.2vh; padding: 2.2vh 1.6vw; }
-  .stat p { margin: 0; font-size: 2.3vh; color: var(--muted); font-weight: 700; }
-  .stat b { display: block; font-size: 8.4vh; font-weight: 900; line-height: 1.05; margin-top: 0.6vh; font-variant-numeric: tabular-nums; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4vw; }
+  .stat { background: var(--panel); border-radius: 2.2vh; padding: 1.6vh 1.4vw; }
+  .stat p { margin: 0; font-size: 2.1vh; color: var(--muted); font-weight: 700; }
+  .stat b { display: block; font-size: 6.2vh; font-weight: 900; line-height: 1.05; margin-top: 0.6vh; font-variant-numeric: tabular-nums; }
   .stat b small { font-size: 3vh; font-weight: 700; color: var(--muted); margin-left: 0.4vw; }
-  .stat .split { font-size: 2.2vh; color: var(--muted); margin-top: 0.4vh; }
+  .stat .split { font-size: 1.9vh; color: var(--muted); margin-top: 0.4vh; }
   .stat .split em { font-style: normal; font-weight: 800; }
   .stat .split .b { color: var(--before); } .stat .split .a { color: var(--after); }
 
@@ -47,30 +47,44 @@
   .legend { display: flex; gap: 1.6vw; font-size: 2.1vh; font-weight: 700; margin-bottom: 1.4vh; color: var(--muted); }
   .legend span { display: inline-flex; align-items: center; gap: 0.6vw; }
   .legend i { width: 2.6vh; height: 1.4vh; border-radius: 0.7vh; display: inline-block; }
-  .rows { flex: 1; display: grid; grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 1.2vh; }
-  .row { display: grid; grid-template-columns: 29% 1fr; align-items: center; gap: 1.2vw; }
-  .row .lab { font-size: 2.8vh; font-weight: 800; white-space: nowrap; }
-  .row .lab small { display: block; font-size: 2vh; font-weight: 700; margin-top: 0.3vh; }
+  .rows { flex: 1; display: grid; grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 1.4vh; }
+  .row { display: flex; flex-direction: column; justify-content: center; gap: 0.7vh; }
+  .row .lab { font-size: 2.7vh; font-weight: 800; white-space: nowrap; display: flex; align-items: baseline; gap: 0.8vw; }
+  .row .lab small { font-size: 2.1vh; font-weight: 800; }
   .up { color: #57d38c; } .down { color: var(--before); } .same { color: var(--muted); }
   .bars { display: flex; flex-direction: column; gap: 0.8vh; }
-  .bar { display: grid; grid-template-columns: 1fr 7.5vw; align-items: center; gap: 0.8vw; }
-  .track { height: 3.2vh; background: var(--panel-2); border-radius: 1.6vh; overflow: hidden; }
+  .bar { display: grid; grid-template-columns: 1fr 5.5vw; align-items: center; gap: 0.8vw; }
+  .track { height: 2.8vh; background: var(--panel-2); border-radius: 1.6vh; overflow: hidden; }
   .fill { height: 100%; width: 0; border-radius: 1.6vh; transition: width .9s ease; }
   .fill.b { background: var(--before); } .fill.a { background: var(--after); }
   .bar span { font-size: 2.4vh; font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; }
 
-  .map { flex: 1.35; display: flex; flex-direction: column; }
+  .map { flex: 1.55; display: flex; flex-direction: column; }
   #map { position: relative; } #map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .map .sum { font-size: 2.2vh; color: var(--muted); margin: 1vh 0 0; text-align: center; }
+  .map .sum { font-size: 1.9vh; color: var(--muted); margin: 0.8vh 0 0; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .feed { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .feed ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.1vh; overflow: hidden; flex: 1; }
-  .feed li { background: var(--panel-2); border-radius: 1.4vh; padding: 1vh 1.1vw; animation: in .6s ease; }
+  .feed ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.9vh; overflow: hidden; flex: 1; }
+  .feed li { background: var(--panel-2); border-radius: 1.4vh; padding: 0.8vh 1vw; animation: in .6s ease; }
   @keyframes in { from { opacity: 0; transform: translateY(-1vh); } }
-  .feed .meta { display: flex; align-items: center; gap: 0.7vw; font-size: 1.8vh; color: var(--muted); font-weight: 700; margin-bottom: 0.5vh; }
+  .meta { display: flex; align-items: center; gap: 0.7vw; font-size: 1.8vh; color: var(--muted); font-weight: 700; margin-bottom: 0.5vh; }
   .tag { border: 0.2vh solid currentColor; border-radius: 99px; padding: 0.1vh 0.7vw; font-size: 1.7vh; }
   .tag.b { color: var(--before); } .tag.a { color: var(--after); } .tag.m { color: #f2c94c; }
-  .feed p { margin: 0; font-size: 2.3vh; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .feed p { margin: 0; font-size: 2.1vh; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   .empty { color: var(--muted); font-size: 2.2vh; }
+  .best { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .best ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.9vh; overflow: hidden; flex: 1; }
+  .best li { display: grid; grid-template-columns: 4vh 1fr auto; align-items: center; gap: 0.8vw; background: var(--panel-2); border-radius: 1.4vh; padding: 0.8vh 1vw; }
+  .best .rk { width: 4vh; height: 4vh; border-radius: 50%; background: #3a4349; display: flex; align-items: center; justify-content: center; font-size: 2.4vh; font-weight: 900; }
+  .best li:first-child .rk { background: #f2c94c; color: #1b2024; }
+  .best .bt { min-width: 0; }
+  .best .bt p { margin: 0.2vh 0 0; font-size: 2.1vh; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .best .lk { font-size: 2.4vh; font-weight: 900; color: #57d38c; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .memos { flex: 1.55; display: flex; flex-direction: column; overflow: hidden; }
+  .wall { flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 1.1vh 0.8vw; overflow: hidden; min-height: 0; }
+  .note { background: #fff3b0; color: #2b2a24; border-radius: 0.8vh; padding: 1vh 0.8vw; font-size: 2vh; font-weight: 600; line-height: 1.35; box-shadow: 0 0.4vh 1vh rgba(0,0,0,.35); overflow: hidden; display: flex; flex-direction: column; justify-content: center; animation: in .6s ease; }
+  .note:nth-child(3n+2) { background: #ffd9e4; transform: rotate(0.6deg); } .note:nth-child(3n) { background: #d6f0ff; transform: rotate(-0.6deg); }
+  .note p { margin: 0; min-height: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .note small { display: block; flex-shrink: 0; font-size: 1.6vh; color: #6b675a; margin-top: 0.4vh; font-weight: 700; }
   .err { position: fixed; left: 50%; bottom: 2vh; transform: translateX(-50%); background: #3a1f1d; color: #ffb4ad; padding: 1vh 1.4vw; border-radius: 1vh; font-size: 2vh; }
 </style>
 </head>
@@ -88,14 +102,15 @@
     </div>
   </header>
 
+  <div class="stats">
+    <div class="stat"><p>참여한 사람</p><b id="n-people">0<small>명</small></b><div class="split">지금도 늘어나는 중</div></div>
+    <div class="stat"><p>맥락 보기 전 댓글</p><b id="n-cb" style="color: var(--before)">0<small>개</small></b><div class="split">게시글만 읽고 남긴 댓글</div></div>
+    <div class="stat"><p>맥락 본 후 댓글</p><b id="n-ca" style="color: var(--after)">0<small>개</small></b><div class="split">전체 이야기를 알고 남긴 댓글</div></div>
+    <div class="stat"><p>공유 전 확인 메모</p><b id="n-checks">0<small>장</small></b><div class="split">'공유하기 전에 확인할 것'</div></div>
+  </div>
+
   <main>
     <div class="col">
-      <div class="stats">
-        <div class="stat"><p>참여한 사람</p><b id="n-people">0<small>명</small></b><div class="split">지금도 늘어나는 중</div></div>
-        <div class="stat"><p>남긴 댓글</p><b id="n-comments">0<small>개</small></b><div class="split">맥락 보기 전 <em class="b" id="n-cb">0</em>, 본 후 <em class="a" id="n-ca">0</em></div></div>
-        <div class="stat"><p>공유 전 확인 메모</p><b id="n-checks">0<small>장</small></b><div class="split">'공유하기 전에 확인할 것'</div></div>
-      </div>
-
       <section class="panel choices">
         <h2>이 글을 본 나라면? <small id="choice-note">처음 선택과 다시 고른 선택</small></h2>
         <div class="legend"><span><i style="background: var(--before)"></i>게시글만 읽었을 때</span><span><i style="background: var(--after)"></i>전체 맥락을 본 뒤</span></div>
@@ -109,9 +124,20 @@
         <div id="map" style="flex: 1; display: flex; min-height: 0"></div>
         <p class="sum" id="map-sum">아직 아무도 잇지 않았어요.</p>
       </section>
+      <section class="panel best">
+        <h2>추천을 많이 받은 댓글 <small>추천 많은 순</small></h2>
+        <ol id="best"><li class="empty" style="display: block">아직 댓글이 없어요.</li></ol>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel memos">
+        <h2>공유하기 전에 확인할 것 <small>모두가 붙인 메모</small></h2>
+        <div class="wall" id="wall"><p class="empty">아직 붙은 메모가 없어요.</p></div>
+      </section>
       <section class="panel feed">
-        <h2>방금 올라온 글</h2>
-        <ul id="feed"><li class="empty">아직 올라온 글이 없어요.</li></ul>
+        <h2>방금 올라온 댓글</h2>
+        <ul id="feed"><li class="empty">아직 올라온 댓글이 없어요.</li></ul>
       </section>
     </div>
   </main>
@@ -142,9 +168,8 @@ function renderStats() {
   const people = r.filter(x => x.before || x.after || (Array.isArray(x.spread) && x.spread.length)).length;
   setNum("#n-people", people);
   const vis = data.comments.filter(c => !c.hidden);
-  setNum("#n-comments", vis.length);
-  $("#n-cb").textContent = vis.filter(c => c.phase !== "after").length;
-  $("#n-ca").textContent = vis.filter(c => c.phase === "after").length;
+  setNum("#n-cb", vis.filter(c => c.phase !== "after").length);
+  setNum("#n-ca", vis.filter(c => c.phase === "after").length);
   setNum("#n-checks", data.checks.length);
 }
 
@@ -214,32 +239,65 @@ function renderMap() {
   $("#map").replaceChildren(svg);
   $("#map-people").textContent = withSpread.length ? `${withSpread.length}명 참여` : "";
   $("#map-sum").textContent = withSpread.length
-    ? `이 글은 지금까지 ${links}곳으로 퍼졌어요.` + (none ? ` 안 보낸 사람은 ${none}명이에요.` : "")
+    ? `지금까지 ${links}곳으로 퍼졌어요.` + (none ? ` 안 보낸 사람 ${none}명` : "")
     : "아직 아무도 잇지 않았어요.";
 }
 
+function fitList(box) {
+  const bottom = box.getBoundingClientRect().bottom;
+  [...box.children].forEach(n => { if (n.getBoundingClientRect().bottom > bottom + 6) n.remove(); });
+}
+function tagEl(c) {
+  const t = document.createElement("span");
+  t.className = "tag " + (c.phase === "after" ? "a" : "b");
+  t.textContent = c.phase === "after" ? "맥락 본 후" : "맥락 보기 전";
+  return t;
+}
 function renderFeed() {
-  const items = [
-    ...data.comments.filter(c => !c.hidden).map(c => ({ t: c.createdAt, kind: c.phase === "after" ? "a" : "b", tag: c.phase === "after" ? "맥락 본 후 댓글" : "맥락 보기 전 댓글", text: c.text, nick: c.nick })),
-    ...data.checks.map(c => ({ t: c.createdAt, kind: "m", tag: "확인 메모", text: c.text, nick: c.nick })),
-  ].sort((a, b) => b.t - a.t).slice(0, 8);
+  const items = data.comments.filter(c => !c.hidden).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8);
   const ul = $("#feed");
-  if (!items.length) { ul.innerHTML = '<li class="empty">아직 올라온 글이 없어요.</li>'; return; }
-  ul.replaceChildren(...items.map(it => {
+  if (!items.length) { ul.innerHTML = '<li class="empty">아직 올라온 댓글이 없어요.</li>'; return; }
+  ul.replaceChildren(...items.map(c => {
     const li = document.createElement("li");
     const meta = document.createElement("div"); meta.className = "meta";
-    const tag = document.createElement("span"); tag.className = "tag " + it.kind; tag.textContent = it.tag;
-    const who = document.createElement("span"); who.textContent = `${it.nick || "익명"}  ${timeAgo(it.t)}`;
-    meta.append(tag, who);
-    const p = document.createElement("p"); p.textContent = it.text;
+    const who = document.createElement("span"); who.textContent = `${c.nick || "익명"}  ${timeAgo(c.createdAt)}` + (c.parentId ? "  (답글)" : "");
+    meta.append(tagEl(c), who);
+    const p = document.createElement("p"); p.textContent = c.text;
     li.append(meta, p); return li;
   }));
-  // 화면에 다 안 들어가는 글은 잘린 채 보이지 않게 빼기
-  const bottom = ul.getBoundingClientRect().bottom;
-  [...ul.children].forEach(li => { if (li.getBoundingClientRect().bottom > bottom + 1) li.remove(); });
+  fitList(ul);
+}
+function renderBest() {
+  const top = data.comments.filter(c => !c.hidden && (c.likes || 0) > 0)
+    .sort((a, b) => (b.likes || 0) - (a.likes || 0) || a.createdAt - b.createdAt).slice(0, 5);
+  const ol = $("#best");
+  if (!top.length) { ol.innerHTML = '<li class="empty" style="display: block">아직 추천받은 댓글이 없어요.</li>'; return; }
+  ol.replaceChildren(...top.map((c, i) => {
+    const li = document.createElement("li");
+    const rk = document.createElement("div"); rk.className = "rk"; rk.textContent = i + 1;
+    const bt = document.createElement("div"); bt.className = "bt";
+    const meta = document.createElement("div"); meta.className = "meta"; meta.style.marginBottom = "0";
+    const who = document.createElement("span"); who.textContent = c.nick || "익명";
+    meta.append(tagEl(c), who);
+    const p = document.createElement("p"); p.textContent = c.text;
+    bt.append(meta, p);
+    const lk = document.createElement("div"); lk.className = "lk"; lk.textContent = "👍 " + (c.likes || 0);
+    li.append(rk, bt, lk); return li;
+  }));
+  fitList(ol);
+}
+function renderMemos() {
+  const items = [...data.checks].sort((a, b) => b.createdAt - a.createdAt).slice(0, 6);
+  const wall = $("#wall");
+  if (!items.length) { wall.innerHTML = '<p class="empty">아직 붙은 메모가 없어요.</p>'; return; }
+  wall.replaceChildren(...items.map(c => {
+    const d = document.createElement("div"); d.className = "note";
+    const p = document.createElement("p"); p.textContent = c.text;
+    d.append(p); return d;
+  }));
 }
 
-function renderAll() { renderStats(); renderChoices(); renderMap(); renderFeed(); }
+function renderAll() { renderStats(); renderChoices(); renderMap(); renderFeed(); renderBest(); renderMemos(); }
 
 async function start() {
   if (new URLSearchParams(location.search).has("demo")) { window.__live = { data, renderAll }; renderAll(); return; }
@@ -253,8 +311,8 @@ async function start() {
     const rows = snap => snap.docs.map(d => { const v = d.data({ serverTimestamps: "estimate" }); return { id: d.id, ...v, createdAt: ms(v.createdAt) }; });
     const fail = err => { console.error(err); showErr(); };
     fs.onSnapshot(fs.collection(db, "responses"), s => { data.responses = s.docs.map(d => d.data()); renderAll(); }, fail);
-    fs.onSnapshot(fs.query(fs.collection(db, "comments"), fs.orderBy("createdAt", "asc")), s => { data.comments = rows(s); renderStats(); renderFeed(); }, fail);
-    fs.onSnapshot(fs.query(fs.collection(db, "checks"), fs.orderBy("createdAt", "asc")), s => { data.checks = rows(s); renderStats(); renderFeed(); }, fail);
+    fs.onSnapshot(fs.query(fs.collection(db, "comments"), fs.orderBy("createdAt", "asc")), s => { data.comments = rows(s); renderStats(); renderFeed(); renderBest(); }, fail);
+    fs.onSnapshot(fs.query(fs.collection(db, "checks"), fs.orderBy("createdAt", "asc")), s => { data.checks = rows(s); renderStats(); renderMemos(); }, fail);
   } catch (err) { console.error(err); showErr(); }
   renderAll();
   setInterval(renderFeed, 30000); // '○분 전' 갱신
