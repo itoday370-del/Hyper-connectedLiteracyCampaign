@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>공유하기 전에 3초 · 실시간 현황</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --bg: #111416; --panel: #1b2024; --panel-2: #232a2f; --line: #2f383e;
+    --text: #f2f4f5; --muted: #9aa6ad;
+    --before: #ff5a4f; --after: #5b9bff; --teal: #3AA9B8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; overflow: hidden; }
+  .wrap { height: 100vh; padding: 2.6vh 2.4vw; display: grid; grid-template-rows: auto 1fr; gap: 2.2vh; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 2vw; }
+  .brand { display: flex; align-items: baseline; gap: 1.4vw; }
+  .brand h1 { margin: 0; font-size: 5.4vh; font-weight: 900; letter-spacing: -0.1vh; }
+  .brand h1 span { color: var(--teal); }
+  .brand p { margin: 0; font-size: 2.6vh; color: var(--muted); font-weight: 600; }
+  .live { display: inline-flex; align-items: center; gap: 0.8vh; font-size: 2.2vh; font-weight: 800; color: var(--before); margin-left: 1vw; }
+  .live i { width: 1.4vh; height: 1.4vh; border-radius: 50%; background: var(--before); animation: blink 1.6s infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .join { display: flex; align-items: center; gap: 1.4vw; background: var(--panel); border-radius: 2vh; padding: 1.2vh 1.4vw 1.2vh 1.2vh; }
+  .join img { width: 11vh; height: 11vh; background: #fff; border-radius: 1vh; padding: 0.6vh; display: block; }
+  .join b { display: block; font-size: 2.8vh; }
+  .join small { display: block; font-size: 2vh; color: var(--muted); margin-top: 0.4vh; }
+
+  main { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2vw; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: 2.2vh; min-height: 0; }
+  .panel { background: var(--panel); border-radius: 2.2vh; padding: 2.4vh 1.8vw; min-height: 0; }
+  .panel h2 { margin: 0 0 1.6vh; font-size: 2.8vh; font-weight: 800; display: flex; align-items: baseline; justify-content: space-between; gap: 1vw; }
+  .panel h2 small { font-size: 2vh; color: var(--muted); font-weight: 600; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4vw; }
+  .stat { background: var(--panel); border-radius: 2.2vh; padding: 2.2vh 1.6vw; }
+  .stat p { margin: 0; font-size: 2.3vh; color: var(--muted); font-weight: 700; }
+  .stat b { display: block; font-size: 8.4vh; font-weight: 900; line-height: 1.05; margin-top: 0.6vh; font-variant-numeric: tabular-nums; }
+  .stat b small { font-size: 3vh; font-weight: 700; color: var(--muted); margin-left: 0.4vw; }
+  .stat .split { font-size: 2.2vh; color: var(--muted); margin-top: 0.4vh; }
+  .stat .split em { font-style: normal; font-weight: 800; }
+  .stat .split .b { color: var(--before); } .stat .split .a { color: var(--after); }
+
+  .choices { flex: 1; display: flex; flex-direction: column; }
+  .legend { display: flex; gap: 1.6vw; font-size: 2.1vh; font-weight: 700; margin-bottom: 1.4vh; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 0.6vw; }
+  .legend i { width: 2.6vh; height: 1.4vh; border-radius: 0.7vh; display: inline-block; }
+  .rows { flex: 1; display: grid; grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 1.2vh; }
+  .row { display: grid; grid-template-columns: 29% 1fr; align-items: center; gap: 1.2vw; }
+  .row .lab { font-size: 2.8vh; font-weight: 800; white-space: nowrap; }
+  .row .lab small { display: block; font-size: 2vh; font-weight: 700; margin-top: 0.3vh; }
+  .up { color: #57d38c; } .down { color: var(--before); } .same { color: var(--muted); }
+  .bars { display: flex; flex-direction: column; gap: 0.8vh; }
+  .bar { display: grid; grid-template-columns: 1fr 7.5vw; align-items: center; gap: 0.8vw; }
+  .track { height: 3.2vh; background: var(--panel-2); border-radius: 1.6vh; overflow: hidden; }
+  .fill { height: 100%; width: 0; border-radius: 1.6vh; transition: width .9s ease; }
+  .fill.b { background: var(--before); } .fill.a { background: var(--after); }
+  .bar span { font-size: 2.4vh; font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; }
+
+  .map { flex: 1.35; display: flex; flex-direction: column; }
+  #map { position: relative; } #map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .map .sum { font-size: 2.2vh; color: var(--muted); margin: 1vh 0 0; text-align: center; }
+  .feed { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .feed ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.1vh; overflow: hidden; flex: 1; }
+  .feed li { background: var(--panel-2); border-radius: 1.4vh; padding: 1vh 1.1vw; animation: in .6s ease; }
+  @keyframes in { from { opacity: 0; transform: translateY(-1vh); } }
+  .feed .meta { display: flex; align-items: center; gap: 0.7vw; font-size: 1.8vh; color: var(--muted); font-weight: 700; margin-bottom: 0.5vh; }
+  .tag { border: 0.2vh solid currentColor; border-radius: 99px; padding: 0.1vh 0.7vw; font-size: 1.7vh; }
+  .tag.b { color: var(--before); } .tag.a { color: var(--after); } .tag.m { color: #f2c94c; }
+  .feed p { margin: 0; font-size: 2.3vh; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .empty { color: var(--muted); font-size: 2.2vh; }
+  .err { position: fixed; left: 50%; bottom: 2vh; transform: translateX(-50%); background: #3a1f1d; color: #ffb4ad; padding: 1vh 1.4vw; border-radius: 1vh; font-size: 2vh; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>공유하기 전에 <span>3초</span></h1>
+      <p>「후원 명세서」로 만든 초연결사회 캠페인</p>
+      <span class="live"><i></i>실시간</span>
+    </div>
+    <div class="join">
+      <img src="media/qr.png" alt="캠페인 사이트 QR 코드">
+      <div><b>QR 찍고 참여하기</b><small>휴대폰으로 5분이면 끝나요</small></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="col">
+      <div class="stats">
+        <div class="stat"><p>참여한 사람</p><b id="n-people">0<small>명</small></b><div class="split">지금도 늘어나는 중</div></div>
+        <div class="stat"><p>남긴 댓글</p><b id="n-comments">0<small>개</small></b><div class="split">맥락 보기 전 <em class="b" id="n-cb">0</em>, 본 후 <em class="a" id="n-ca">0</em></div></div>
+        <div class="stat"><p>공유 전 확인 메모</p><b id="n-checks">0<small>장</small></b><div class="split">'공유하기 전에 확인할 것'</div></div>
+      </div>
+
+      <section class="panel choices">
+        <h2>이 글을 본 나라면? <small id="choice-note">처음 선택과 다시 고른 선택</small></h2>
+        <div class="legend"><span><i style="background: var(--before)"></i>게시글만 읽었을 때</span><span><i style="background: var(--after)"></i>전체 맥락을 본 뒤</span></div>
+        <div class="rows" id="rows"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel map">
+        <h2>모두가 만든 확산 지도 <small id="map-people"></small></h2>
+        <div id="map" style="flex: 1; display: flex; min-height: 0"></div>
+        <p class="sum" id="map-sum">아직 아무도 잇지 않았어요.</p>
+      </section>
+      <section class="panel feed">
+        <h2>방금 올라온 글</h2>
+        <ul id="feed"><li class="empty">아직 올라온 글이 없어요.</li></ul>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="config.js?v=11"></script>
+<script type="module">
+const LABELS = { share: "공유한다", comment: "댓글만 단다", pass: "그냥 넘긴다", check: "사실을 더 확인한다" };
+const ORDER = ["share", "comment", "pass", "check"];
+const SPREAD = { group: "단톡방", story: "인스타 스토리", community: "커뮤니티", blog: "블로그", dm: "친구 1:1" };
+const $ = s => document.querySelector(s);
+const data = { responses: [], comments: [], checks: [] };
+
+function timeAgo(ms) {
+  const s = Math.max(0, Math.floor((Date.now() - ms) / 1000));
+  if (s < 60) return "방금";
+  if (s < 3600) return Math.floor(s / 60) + "분 전";
+  return Math.floor(s / 3600) + "시간 전";
+}
+function setNum(id, n, unit) {
+  const elx = $(id);
+  elx.firstChild.nodeValue = String(n);
+  if (unit && !elx.querySelector("small")) { const s = document.createElement("small"); s.textContent = unit; elx.append(s); }
+}
+
+function renderStats() {
+  const r = data.responses;
+  const people = r.filter(x => x.before || x.after || (Array.isArray(x.spread) && x.spread.length)).length;
+  setNum("#n-people", people);
+  const vis = data.comments.filter(c => !c.hidden);
+  setNum("#n-comments", vis.length);
+  $("#n-cb").textContent = vis.filter(c => c.phase !== "after").length;
+  $("#n-ca").textContent = vis.filter(c => c.phase === "after").length;
+  setNum("#n-checks", data.checks.length);
+}
+
+function renderChoices() {
+  const before = data.responses.filter(x => x.before);
+  const after = data.responses.filter(x => x.after);
+  $("#choice-note").textContent = `처음 ${before.length}명, 다시 고른 ${after.length}명`;
+  const box = $("#rows");
+  if (!box.children.length) {
+    for (const k of ORDER) {
+      const row = document.createElement("div");
+      row.className = "row"; row.dataset.k = k;
+      row.innerHTML = `<div class="lab">${LABELS[k]}<small></small></div>
+        <div class="bars">
+          <div class="bar"><div class="track"><div class="fill b"></div></div><span class="pb">0%</span></div>
+          <div class="bar"><div class="track"><div class="fill a"></div></div><span class="pa">0%</span></div>
+        </div>`;
+      box.append(row);
+    }
+  }
+  for (const k of ORDER) {
+    const row = box.querySelector(`[data-k="${k}"]`);
+    const pb = before.length ? Math.round(before.filter(x => x.before === k).length / before.length * 100) : 0;
+    const pa = after.length ? Math.round(after.filter(x => x.after === k).length / after.length * 100) : 0;
+    row.querySelector(".fill.b").style.width = pb + "%";
+    row.querySelector(".fill.a").style.width = pa + "%";
+    row.querySelector(".pb").textContent = pb + "%";
+    row.querySelector(".pa").textContent = pa + "%";
+    const d = pa - pb, sm = row.querySelector(".lab small");
+    if (!before.length || !after.length) { sm.textContent = ""; sm.className = ""; }
+    else if (d > 0) { sm.textContent = `▲ ${d}%p`; sm.className = "up"; }
+    else if (d < 0) { sm.textContent = `▼ ${-d}%p`; sm.className = "down"; }
+    else { sm.textContent = "변화 없음"; sm.className = "same"; }
+  }
+}
+
+function renderMap() {
+  const withSpread = data.responses.filter(x => Array.isArray(x.spread));
+  const counts = {}; let links = 0, none = 0;
+  for (const r of withSpread) for (const k of r.spread) {
+    if (k === "none") { none++; continue; }
+    if (SPREAD[k]) { counts[k] = (counts[k] || 0) + 1; links++; }
+  }
+  const W = 560, H = 330, cx = 280, cy = 165;
+  const keys = Object.keys(SPREAD);
+  const max = Math.max(1, ...keys.map(k => counts[k] || 0));
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "확산 지도: " + keys.map(k => `${SPREAD[k]} ${counts[k] || 0}명`).join(", "));
+  const mk = (tag, attrs, text) => { const n = document.createElementNS(NS, tag); for (const [a, v] of Object.entries(attrs)) n.setAttribute(a, v); if (text != null) n.textContent = text; svg.append(n); return n; };
+  const pos = keys.map((k, i) => { const a = -Math.PI / 2 + i * (2 * Math.PI / keys.length); return { k, x: cx + Math.cos(a) * 200, y: cy + Math.sin(a) * 125 }; });
+  for (const p of pos) {
+    const c = counts[p.k] || 0;
+    mk("line", { x1: cx, y1: cy, x2: p.x, y2: p.y, stroke: c ? "#ff5a4f" : "#2f383e", "stroke-width": c ? 3 + 18 * c / max : 2, "stroke-linecap": "round", opacity: c ? 0.9 : 1 });
+  }
+  mk("circle", { cx, cy, r: 50, fill: "#ff5a4f" });
+  mk("text", { x: cx, y: cy + 7, "text-anchor": "middle", "font-size": 23, "font-weight": 800, fill: "#fff" }, "글 하나");
+  for (const p of pos) {
+    const c = counts[p.k] || 0;
+    mk("rect", { x: p.x - 76, y: p.y - 33, width: 152, height: 66, rx: 16, fill: "#232a2f", stroke: c ? "#ff5a4f" : "#2f383e", "stroke-width": 2 });
+    mk("text", { x: p.x, y: p.y - 5, "text-anchor": "middle", "font-size": 22, "font-weight": 800, fill: "#f2f4f5" }, SPREAD[p.k]);
+    mk("text", { x: p.x, y: p.y + 21, "text-anchor": "middle", "font-size": 20, "font-weight": 700, fill: "#9aa6ad" }, c + "명");
+  }
+  $("#map").replaceChildren(svg);
+  $("#map-people").textContent = withSpread.length ? `${withSpread.length}명 참여` : "";
+  $("#map-sum").textContent = withSpread.length
+    ? `이 글은 지금까지 ${links}곳으로 퍼졌어요.` + (none ? ` 안 보낸 사람은 ${none}명이에요.` : "")
+    : "아직 아무도 잇지 않았어요.";
+}
+
+function renderFeed() {
+  const items = [
+    ...data.comments.filter(c => !c.hidden).map(c => ({ t: c.createdAt, kind: c.phase === "after" ? "a" : "b", tag: c.phase === "after" ? "맥락 본 후 댓글" : "맥락 보기 전 댓글", text: c.text, nick: c.nick })),
+    ...data.checks.map(c => ({ t: c.createdAt, kind: "m", tag: "확인 메모", text: c.text, nick: c.nick })),
+  ].sort((a, b) => b.t - a.t).slice(0, 8);
+  const ul = $("#feed");
+  if (!items.length) { ul.innerHTML = '<li class="empty">아직 올라온 글이 없어요.</li>'; return; }
+  ul.replaceChildren(...items.map(it => {
+    const li = document.createElement("li");
+    const meta = document.createElement("div"); meta.className = "meta";
+    const tag = document.createElement("span"); tag.className = "tag " + it.kind; tag.textContent = it.tag;
+    const who = document.createElement("span"); who.textContent = `${it.nick || "익명"}  ${timeAgo(it.t)}`;
+    meta.append(tag, who);
+    const p = document.createElement("p"); p.textContent = it.text;
+    li.append(meta, p); return li;
+  }));
+  // 화면에 다 안 들어가는 글은 잘린 채 보이지 않게 빼기
+  const bottom = ul.getBoundingClientRect().bottom;
+  [...ul.children].forEach(li => { if (li.getBoundingClientRect().bottom > bottom + 1) li.remove(); });
+}
+
+function renderAll() { renderStats(); renderChoices(); renderMap(); renderFeed(); }
+
+async function start() {
+  if (new URLSearchParams(location.search).has("demo")) { window.__live = { data, renderAll }; renderAll(); return; }
+  const cfg = window.CAMPAIGN_CONFIG && window.CAMPAIGN_CONFIG.firebase;
+  if (!cfg || !cfg.apiKey) { renderAll(); return; }
+  const base = "https://www.gstatic.com/firebasejs/10.12.2";
+  try {
+    const [appMod, fs] = await Promise.all([import(`${base}/firebase-app.js`), import(`${base}/firebase-firestore.js`)]);
+    const db = fs.getFirestore(appMod.initializeApp(cfg));
+    const ms = ts => ts && ts.toMillis ? ts.toMillis() : Date.now();
+    const rows = snap => snap.docs.map(d => { const v = d.data({ serverTimestamps: "estimate" }); return { id: d.id, ...v, createdAt: ms(v.createdAt) }; });
+    const fail = err => { console.error(err); showErr(); };
+    fs.onSnapshot(fs.collection(db, "responses"), s => { data.responses = s.docs.map(d => d.data()); renderAll(); }, fail);
+    fs.onSnapshot(fs.query(fs.collection(db, "comments"), fs.orderBy("createdAt", "asc")), s => { data.comments = rows(s); renderStats(); renderFeed(); }, fail);
+    fs.onSnapshot(fs.query(fs.collection(db, "checks"), fs.orderBy("createdAt", "asc")), s => { data.checks = rows(s); renderStats(); renderFeed(); }, fail);
+  } catch (err) { console.error(err); showErr(); }
+  renderAll();
+  setInterval(renderFeed, 30000); // '○분 전' 갱신
+}
+function showErr() {
+  if (document.querySelector(".err")) return;
+  const d = document.createElement("div"); d.className = "err"; d.textContent = "연결이 끊겼어요. 인터넷을 확인하고 새로고침해 주세요.";
+  document.body.append(d);
+}
+start();
+</script>
+</body>
+</html>
