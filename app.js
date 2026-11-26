@@ -592,7 +592,7 @@ function renderTypeCard() {
       row(T("tc_reach"), picks.length ? T("tc_reach_val", { n: fmt(total) }) : T("tc_stopped")),
       badges.children.length ? badges : null),
     el("div", { class: "tc-foot" }, el("b", { text: T("tc_slogan") }), el("span", { text: T("tc_snack") })));
-  wrap.replaceChildren(card, el("p", { class: "tc-hint", text: T("tc_hint") }));
+  wrap.replaceChildren(card);
   wrap.hidden = false;
 }
 
