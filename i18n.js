@@ -193,6 +193,17 @@
     foot_privacy: { en: "Please don't write personal information (name, school, contact).", zh: "请不要填写个人信息（姓名、学校、联系方式）。", ja: "個人情報（名前、学校、連絡先）は書かないでください。" },
 
     // app.js가 쓰는 문구
+    anim_me: { ko: "내 공유", en: "My share", zh: "我的分享", ja: "わたしのシェア" },
+    anim_title: { ko: "내 공유로 이 글을 본 사람", en: "People who saw this post through my share", zh: "因为我的分享看到这篇帖子的人", ja: "わたしのシェアでこの投稿を見た人" },
+    anim_unit: { ko: "명", en: "", zh: "人", ja: "人" },
+    anim_direct: { ko: "바로 본 사람 {n}명", en: "Saw it directly: {n}", zh: "直接看到：{n}人", ja: "すぐに見た人：{n}人" },
+    anim_total: { ko: "다시 퍼진 것까지 약 {n}명", en: "Including reshares: about {n}", zh: "算上再次转发：约{n}人", ja: "再シェアを含めて約{n}人" },
+    anim_caption: { ko: "공유 버튼은 한 번 눌렀지만, 글은 이만큼 퍼져요.", en: "You tapped share once, but the post spreads this far.", zh: "你只按了一次分享，帖子却传了这么远。", ja: "シェアボタンを押したのは一度だけでも、投稿はここまで広がります。" },
+    anim_stop: { ko: "이 글은 나에게서 멈췄어요.", en: "This post stopped with me.", zh: "这篇帖子在我这里停下了。", ja: "この投稿はわたしのところで止まりました。" },
+    anim_note: { ko: "예시로 가정한 숫자예요. 단톡방 30명, 인스타 스토리 150명, 커뮤니티 게시판 2,000명, 블로그 300명, 친구 1명이 보고, 본 사람의 10%가 다시 30명에게 공유한다고 가정했어요.", en: "These are example numbers: a group chat 30, an Instagram Story 150, a community board 2,000, a blog 300, a friend 1, and 10% of viewers resharing to 30 people each.", zh: "这是假设的示例数字：群聊30人、Instagram快拍150人、社区论坛2,000人、博客300人、朋友1人看到，其中10%的人再分享给30人。", ja: "仮定した例の数字です。グループチャット30人、インスタのストーリー150人、コミュニティ掲示板2,000人、ブログ300人、友だち1人が見て、そのうち10%がさらに30人にシェアすると仮定しました。" },
+    anim_skip: { ko: "건너뛰기", en: "Skip", zh: "跳过", ja: "スキップ" },
+    my_reach: { ko: "내 공유로 이 글을 본 사람(예시): 약 {n}명", en: "People who saw it through my share (example): about {n}", zh: "因我的分享看到的人（示例）：约{n}人", ja: "わたしのシェアで見た人（例）：約{n}人" },
+    my_reach_zero: { ko: "이 글은 나에게서 멈췄어요. (0명)", en: "This post stopped with me. (0 people)", zh: "这篇帖子在我这里停下了。（0人）", ja: "この投稿はわたしのところで止まりました。（0人）" },
     just_now: { ko: "방금", en: "just now", zh: "刚刚", ja: "たった今" },
     min_ago: { ko: "{n}분 전", en: "{n}m ago", zh: "{n}分钟前", ja: "{n}分前" },
     hr_ago: { ko: "{n}시간 전", en: "{n}h ago", zh: "{n}小时前", ja: "{n}時間前" },
@@ -246,7 +257,7 @@
     langs: LANGS,
     lang: initialLang(),
     t: function (key, vars) {
-      var e = D[key], s = e ? (e[I.lang] || e.ko) : null;
+      var e = D[key], s = e ? (I.lang in e ? e[I.lang] : e.ko) : null;
       if (s == null) return key;
       if (vars) {
         // 영어 단수, 복수: {n|person|people}

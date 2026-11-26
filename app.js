@@ -442,6 +442,122 @@ function renderChecks(items) {
   }
 }
 
+/* ---------- 내 공유가 퍼지는 장면 ---------- */
+const REACH = { group: 30, story: 150, community: 2000, blog: 300, dm: 1 };
+function reachOf(list) {
+  const direct = (list || []).reduce((sum, k) => sum + (REACH[k] || 0), 0);
+  const again = Math.round(direct * 0.1) * 30;
+  return { direct, total: direct + again };
+}
+function fmt(n) { return Number(n).toLocaleString(window.I18N.lang === "ko" ? "ko-KR" : window.I18N.lang); }
+function showMyReach() {
+  const p = $("#my-reach");
+  if (!state.spread) { p.hidden = true; return; }
+  const { total } = reachOf(state.spread);
+  p.textContent = total ? T("my_reach", { n: fmt(total) }) : T("my_reach_zero");
+  p.hidden = false;
+}
+function playSpreadAnim(list) {
+  return new Promise(resolve => {
+    const box = $("#spread-anim");
+    const picks = list.filter(k => REACH[k] !== undefined);
+    const { direct, total } = reachOf(picks);
+    const NS = "http://www.w3.org/2000/svg";
+    const W = 320, H = 210, cy = 108, cx = list.filter(k => REACH[k] !== undefined).length === 1 ? 110 : 160;
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("aria-hidden", "true");
+    const mk = (tag, attrs, text) => { const n = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); if (text != null) n.textContent = text; svg.append(n); return n; };
+    const head = el("p", { class: "sa-title", text: T("anim_title") });
+    const num = el("p", { class: "sa-num", text: "0" });
+    const line1 = el("p", { class: "sa-line" });
+    const cap = el("p", { class: "sa-cap" });
+    const note = el("p", { class: "sa-note", text: picks.length ? T("anim_note") : "" });
+    const skip = el("button", { type: "button", class: "sa-skip", text: T("anim_skip") });
+    box.replaceChildren(head, num, svg, line1, cap, note, skip);
+    box.hidden = false;
+    let done = false, raf = 0, timer = 0;
+    const finish = () => { if (done) return; done = true; cancelAnimationFrame(raf); clearTimeout(timer); box.hidden = true; box.replaceChildren(); resolve(); };
+    skip.addEventListener("click", finish);
+
+    if (!picks.length) {
+      // 안 보낸다: 선 없이 멈춤
+      mk("circle", { cx, cy, r: 30, fill: "#d6342c" });
+      mk("text", { x: cx, y: cy + 4, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: "#fff" }, T("anim_me"));
+      mk("circle", { cx, cy, r: 44, fill: "none", stroke: "#5b9bff", "stroke-width": 3, "stroke-dasharray": "6 6" });
+      num.textContent = "0" + (T("anim_unit") ? " " + T("anim_unit") : "");
+      cap.textContent = T("anim_stop");
+      timer = setTimeout(finish, 2600);
+      return;
+    }
+    // 선, 칸, 퍼지는 점 준비
+    const nodes = picks.map((k, i) => {
+      const n0 = picks.length, a2 = n0 === 1 ? 0 : -Math.PI / 2 + (n0 % 2 ? 0 : Math.PI / n0) + i * (Math.PI * 2 / n0);
+      const x = cx + Math.cos(a2) * 112, y = cy + Math.sin(a2) * 72;
+      const len = Math.hypot(x - cx, y - cy);
+      const ln = mk("line", { x1: cx, y1: cy, x2: x, y2: y, stroke: "#d6342c", "stroke-width": 3, "stroke-linecap": "round", "stroke-dasharray": len, "stroke-dashoffset": len });
+      return { k, x, y, len, ln };
+    });
+    const dots = [];
+    nodes.forEach(n => {
+      const count = Math.min(18, 6 + Math.round(Math.log10(REACH[n.k] + 1) * 3));
+      for (let d = 0; d < count; d++) {
+        const a = Math.atan2(n.y - cy, n.x - cx) + (Math.random() - 0.5) * 2.2;
+        const dist = 22 + Math.random() * 34;
+        dots.push({ c: mk("circle", { cx: n.x, cy: n.y, r: 2.6, fill: "#d6342c", opacity: 0 }), sx: n.x, sy: n.y, tx: n.x + Math.cos(a) * dist, ty: n.y + Math.sin(a) * dist * 0.75, delay: Math.random() * 0.6 });
+      }
+    });
+    mk("circle", { cx, cy, r: 30, fill: "#d6342c" });
+    mk("text", { x: cx, y: cy + 4, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: "#fff" }, T("anim_me"));
+    nodes.forEach(n => {
+      const g = document.createElementNS(NS, "g"); g.setAttribute("opacity", "0"); svg.append(g);
+      const r = document.createElementNS(NS, "rect");
+      for (const [k, v] of Object.entries({ x: n.x - 40, y: n.y - 17, width: 80, height: 34, rx: 9, stroke: "#d6342c", "stroke-width": 1.5 })) r.setAttribute(k, v);
+      r.style.fill = "var(--surface)";
+      const t1 = document.createElementNS(NS, "text");
+      const nm = SPREAD[n.k];
+      for (const [k, v] of Object.entries({ x: n.x, y: n.y - 2, "text-anchor": "middle", "font-size": Math.min(11, 62 / textWidth(nm)), "font-weight": 700, fill: "currentColor" })) t1.setAttribute(k, v);
+      t1.textContent = nm;
+      const t2 = document.createElementNS(NS, "text");
+      for (const [k, v] of Object.entries({ x: n.x, y: n.y + 11, "text-anchor": "middle", "font-size": 10, fill: "#d6342c", "font-weight": 700 })) t2.setAttribute(k, v);
+      t2.textContent = "0";
+      g.append(r, t1, t2);
+      n.g = g; n.t2 = t2;
+    });
+
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const T1 = reduce ? 0 : 1.6, T2 = reduce ? 0 : 3.4;
+    const unit = T("anim_unit") ? " " + T("anim_unit") : "";
+    const start = performance.now();
+    const ease = x => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+    const frame = now => {
+      const t = (now - start) / 1000;
+      nodes.forEach((n, i) => {
+        const p = ease((t - i * (T1 / nodes.length) * 0.6) / (T1 * 0.55 || 1));
+        n.ln.setAttribute("stroke-dashoffset", n.len * (1 - p));
+        n.g.setAttribute("opacity", p > 0.85 || reduce ? 1 : 0);
+        const cp = reduce ? 1 : ease((t - 0.3) / T1);
+        n.t2.textContent = fmt(Math.round(REACH[n.k] * cp)) + unit;
+      });
+      const p1 = reduce ? 1 : ease(t / T1);
+      const p2 = reduce ? 1 : ease((t - T1) / (T2 - T1));
+      const shown = t < T1 && !reduce ? direct * p1 : direct + (total - direct) * p2;
+      num.textContent = fmt(Math.round(shown)) + unit;
+      if (t >= T1 * 0.9 || reduce) line1.textContent = T("anim_direct", { n: fmt(direct) }) + (t >= T2 * 0.9 || reduce ? "  →  " + T("anim_total", { n: fmt(total) }) : "");
+      dots.forEach(d => {
+        const q = reduce ? 1 : ease((t - T1 - d.delay) / 1.2);
+        d.c.setAttribute("cx", d.sx + (d.tx - d.sx) * q);
+        d.c.setAttribute("cy", d.sy + (d.ty - d.sy) * q);
+        d.c.setAttribute("opacity", q > 0 ? Math.min(1, q * 2) * 0.85 : 0);
+      });
+      if (t >= T2 || reduce) cap.textContent = T("anim_caption");
+      if (t < T2 + 0.2 && !reduce) raf = requestAnimationFrame(frame);
+      else timer = setTimeout(finish, reduce ? 3200 : 2400);
+    };
+    raf = requestAnimationFrame(frame);
+  });
+}
+
 /* ---------- 확산 지도 ---------- */
 function bindSpread() {
   const box = $("#spread-choices"), save = $("#spread-save");
@@ -469,12 +585,21 @@ function bindSpread() {
     if (!state.open) { $("#spread-msg").textContent = T("spread_closed"); return; }
     const list = SPREAD_KEYS.filter(k => state.spreadPick.has(k));
     if (!list.length) return;
+    let ok = false;
     try {
       await store.saveResponse("spread", list);
       state.spread = list; local.set("spread", list);
       $("#spread-msg").textContent = "";
+      ok = true;
     } catch (err) { $("#spread-msg").textContent = T("spread_fail"); console.error(err); }
-    paint(); updateGates();
+    if (ok) {
+      // 지도 보여 주기 전에 내 공유가 퍼지는 장면
+      save.disabled = true; save.textContent = T("spread_saved");
+      $$("button", box).forEach(b => b.classList.toggle("on", list.includes(b.dataset.v)));
+      box.classList.add("saved");
+      await playSpreadAnim(list);
+    }
+    paint(); updateGates(); showMyReach();
   });
   paint();
 }
@@ -649,6 +774,7 @@ async function start() {
   bindChoices("#second-choices", "second");
   bindSpread();
   updateGates();
+  showMyReach();
 
   store.onSettings(applySettings);
   store.onComments(list => { state.comments = list; renderComments(); renderCommentStats(); });
@@ -656,7 +782,7 @@ async function start() {
   store.onResponses(list => { lastResponses = list; renderResults(list); renderSpread(list); });
   setupAdmin();
   window.addEventListener("langchange", () => {
-    renderComments(); renderChecks(lastChecks); renderResults(lastResponses); renderSpread(lastResponses); spreadPaint();
+    renderComments(); renderChecks(lastChecks); renderResults(lastResponses); renderSpread(lastResponses); spreadPaint(); showMyReach();
     $("#mine-choice").textContent = state.first ? LABELS[state.first] : "-";
     $("#mine-comment").textContent = state.firstComment || T("mine_none");
     $$(".reply-form .nick-label").forEach(n => { n.textContent = T("nick_label", { n: shownNick(myNick()) }); });
