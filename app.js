@@ -218,6 +218,7 @@ const state = {
   second: local.get("second", null),
   firstComment: local.get("firstComment", null),
   afterComment: local.get("afterComment", null),
+  memo: local.get("memo", false),
   revealed: local.get("revealed", false),
   myVotes: local.get("votes", {}),
   spread: local.get("spread", null),
@@ -558,6 +559,43 @@ function playSpreadAnim(list) {
   });
 }
 
+/* ---------- 나의 공유 유형 카드 ---------- */
+const TYPE_COLORS = ["", "#2a8f9c", "#2F6FD6", "#7B61C9", "#5F6B72", "#d26a1c"];
+function myType() {
+  const f = state.first, s = state.second;
+  if (!s) return 0;
+  if (s === "check") return f === "check" ? 2 : 1;
+  if (s === "pass") return f === "share" || f === "comment" ? 3 : 4;
+  return 5;
+}
+function renderTypeCard() {
+  const wrap = $("#type-card-wrap");
+  const n = myType();
+  if (!n) { wrap.hidden = true; return; }
+  const row = (label, value) => el("div", { class: "tc-row" }, el("span", { class: "tc-k", text: label }), el("span", { class: "tc-v", text: value }));
+  const picks = (state.spread || []).filter(k => k !== "none");
+  const sent = picks.length ? picks.map(k => SPREAD[k]).join(", ") + ` (${T("tc_places", { n: picks.length })})` : T("tc_none_sent");
+  const { total } = reachOf(picks);
+  const badges = el("div", { class: "tc-badges" });
+  if (state.firstComment) badges.append(el("span", { text: T("badge_first") }));
+  if (state.afterComment) badges.append(el("span", { text: T("badge_after") }));
+  if (state.memo) badges.append(el("span", { text: T("badge_memo") }));
+  const card = el("div", { class: "type-card", style: `--tc:${TYPE_COLORS[n]}` },
+    el("div", { class: "tc-top" },
+      el("p", { class: "tc-label", text: T("tc_label") }),
+      el("img", { class: "tc-img", src: `media/types/type${n}.jpg`, alt: "" }),
+      el("h3", { class: "tc-name", text: T(`t${n}_name`) }),
+      el("p", { class: "tc-desc", text: T(`t${n}_desc`) })),
+    el("div", { class: "tc-body" },
+      row(T("tc_choice"), `${state.first ? LABELS[state.first] : "-"} → ${LABELS[state.second]}`),
+      row(T("tc_sent"), sent),
+      row(T("tc_reach"), picks.length ? T("tc_reach_val", { n: fmt(total) }) : T("tc_stopped")),
+      badges.children.length ? badges : null),
+    el("div", { class: "tc-foot" }, el("b", { text: T("tc_slogan") }), el("span", { text: T("tc_snack") })));
+  wrap.replaceChildren(card, el("p", { class: "tc-hint", text: T("tc_hint") }));
+  wrap.hidden = false;
+}
+
 /* ---------- 확산 지도 ---------- */
 function bindSpread() {
   const box = $("#spread-choices"), save = $("#spread-save");
@@ -732,7 +770,7 @@ function setupAdmin() {
   });
 }
 
-const PROGRESS_KEYS = ["first", "second", "firstComment", "afterComment", "revealed", "votes", "spread", "introSeen"];
+const PROGRESS_KEYS = ["first", "second", "firstComment", "afterComment", "memo", "revealed", "votes", "spread", "introSeen"];
 function applySettings(s) {
   const round = s.round || 0;
   const mine = local.get("round", null);
@@ -775,6 +813,7 @@ async function start() {
   bindSpread();
   updateGates();
   showMyReach();
+  renderTypeCard();
 
   store.onSettings(applySettings);
   store.onComments(list => { state.comments = list; renderComments(); renderCommentStats(); });
@@ -782,7 +821,7 @@ async function start() {
   store.onResponses(list => { lastResponses = list; renderResults(list); renderSpread(list); });
   setupAdmin();
   window.addEventListener("langchange", () => {
-    renderComments(); renderChecks(lastChecks); renderResults(lastResponses); renderSpread(lastResponses); spreadPaint(); showMyReach();
+    renderComments(); renderChecks(lastChecks); renderResults(lastResponses); renderSpread(lastResponses); spreadPaint(); showMyReach(); renderTypeCard();
     $("#mine-choice").textContent = state.first ? LABELS[state.first] : "-";
     $("#mine-comment").textContent = state.firstComment || T("mine_none");
     $$(".reply-form .nick-label").forEach(n => { n.textContent = T("nick_label", { n: shownNick(myNick()) }); });
@@ -816,7 +855,7 @@ async function start() {
     if (!state.open) { msg.textContent = T("check_closed"); return; }
     const problem = checkText(ta.value);
     if (problem) { msg.textContent = problem; return; }
-    try { await store.addCheck({ text: ta.value.trim(), nick: myNick() }); ta.value = ""; msg.textContent = ""; }
+    try { await store.addCheck({ text: ta.value.trim(), nick: myNick() }); ta.value = ""; msg.textContent = ""; state.memo = true; local.set("memo", true); }
     catch (err) { msg.textContent = T("check_fail"); console.error(err); }
   });
   $$(".tab").forEach(t => t.addEventListener("click", () => {
@@ -835,7 +874,7 @@ async function start() {
     $("#mine-comment").textContent = state.firstComment || T("mine_none");
     go(3);
   });
-  $("#go-result").addEventListener("click", () => go(4));
+  $("#go-result").addEventListener("click", () => { renderTypeCard(); go(4); });
   $("#go-back-post").addEventListener("click", () => go(1));
 }
 
