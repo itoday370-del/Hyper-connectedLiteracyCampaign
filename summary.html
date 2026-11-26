@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>공유하기 전에 3초 · 참여 결과 모아 보기</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root { --bg: #f6f4ef; --surface: #fff; --line: #e4e0d6; --text: #1f2a2e; --muted: #6b7479; --before: #d6342c; --after: #2f6fd6; --teal: #2a8f9c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; line-height: 1.5; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+  header { margin-bottom: 22px; }
+  .eyebrow { margin: 0; font-size: 14px; font-weight: 700; color: var(--teal); }
+  h1 { margin: 4px 0 6px; font-size: 34px; font-weight: 900; letter-spacing: -0.02em; }
+  h1 span { color: var(--teal); }
+  .meta { margin: 0; color: var(--muted); font-size: 14px; }
+  section { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px 22px 20px; margin-top: 18px; }
+  h2 { margin: 0 0 4px; font-size: 20px; font-weight: 800; }
+  .sub { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .stat { background: var(--bg); border-radius: 14px; padding: 14px 16px; }
+  .stat p { margin: 0; font-size: 13px; color: var(--muted); font-weight: 700; }
+  .stat b { display: block; font-size: 36px; font-weight: 900; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .stat b small { font-size: 15px; color: var(--muted); font-weight: 700; margin-left: 2px; }
+  .legend { display: flex; gap: 16px; font-size: 13px; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+  .legend i { display: inline-block; width: 18px; height: 9px; border-radius: 5px; margin-right: 6px; vertical-align: middle; }
+  .crow { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center; padding: 8px 0; border-top: 1px dashed var(--line); }
+  .crow:first-of-type { border-top: 0; }
+  .clab { font-weight: 800; font-size: 15px; }
+  .clab small { display: block; font-size: 12px; font-weight: 800; }
+  .up { color: #1f9d5a; } .down { color: var(--before); } .same { color: var(--muted); }
+  .bars { display: flex; flex-direction: column; gap: 5px; }
+  .bar { display: grid; grid-template-columns: 1fr 92px; gap: 10px; align-items: center; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .track { height: 14px; background: var(--bg); border-radius: 7px; overflow: hidden; }
+  .fill { height: 100%; border-radius: 7px; }
+  .fill.b { background: var(--before); } .fill.a { background: var(--after); }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .types { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .type { border: 2px solid var(--c); border-radius: 14px; overflow: hidden; text-align: center; background: #f3efe4; }
+  .type img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; mix-blend-mode: multiply; }
+  .type p { margin: 0; padding: 6px 6px 0; font-size: 13px; font-weight: 800; color: var(--c); line-height: 1.3; min-height: 42px; display: flex; align-items: center; justify-content: center; }
+  .type b { display: block; padding: 2px 0 10px; font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; }
+  .type b small { font-size: 12px; color: var(--muted); font-weight: 700; margin-left: 3px; }
+  .sp { display: grid; grid-template-columns: 110px 1fr 60px; gap: 10px; align-items: center; font-size: 14px; padding: 5px 0; }
+  .sp .fill { background: var(--before); }
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+  .colh { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 10px 14px; border-radius: 12px; color: #fff; font-weight: 800; margin-bottom: 10px; }
+  .colh.b { background: var(--before); } .colh.a { background: var(--after); }
+  .colh small { font-weight: 700; opacity: .9; }
+  ol.clist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .cm { background: var(--bg); border-radius: 12px; padding: 10px 12px; }
+  .cm .top { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); font-weight: 700; }
+  .cm .likes { color: #1f9d5a; white-space: nowrap; }
+  .cm p { margin: 4px 0 0; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .cm ul { list-style: none; margin: 8px 0 0; padding: 0 0 0 12px; border-left: 2px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+  .cm ul li { font-size: 14px; }
+  .cm ul li span { color: var(--muted); font-size: 12px; font-weight: 700; margin-right: 6px; }
+  .empty { color: var(--muted); font-size: 14px; padding: 8px 2px; }
+  .wall { columns: 4 200px; column-gap: 10px; }
+  .note { break-inside: avoid; display: inline-block; width: 100%; margin: 0 0 10px; background: #fff3b0; border-radius: 8px; padding: 10px 12px; font-size: 15px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,.08); overflow-wrap: anywhere; }
+  .note:nth-child(3n+2) { background: #ffd9e4; } .note:nth-child(3n) { background: #d6f0ff; }
+  .note small { display: block; margin-top: 4px; font-size: 11px; color: #6b675a; font-weight: 700; }
+  .tools { display: flex; gap: 8px; margin-top: 10px; }
+  .tools button { font: inherit; font-size: 13px; font-weight: 700; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+  footer { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .two, .cols { grid-template-columns: 1fr; }
+    .types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .crow { grid-template-columns: 1fr; gap: 6px; }
+    h1 { font-size: 28px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .tools { display: none; }
+    section { break-inside: avoid-page; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">「후원 명세서」로 만든 초연결사회 캠페인</p>
+    <h1>공유하기 전에 <span>3초</span> 참여 결과</h1>
+    <p class="meta" id="meta">불러오는 중…</p>
+    <div class="tools"><button type="button" onclick="window.print()">인쇄 / PDF로 저장</button></div>
+  </header>
+
+  <section>
+    <h2>한눈에 보기</h2>
+    <p class="sub">참여 기록과 댓글, 메모를 모은 숫자예요.</p>
+    <div class="stats">
+      <div class="stat"><p>참여한 사람</p><b id="s-people">0<small>명</small></b></div>
+      <div class="stat"><p>맥락 보기 전 댓글</p><b id="s-cb" style="color: var(--before)">0<small>개</small></b></div>
+      <div class="stat"><p>맥락 본 후 댓글</p><b id="s-ca" style="color: var(--after)">0<small>개</small></b></div>
+      <div class="stat"><p>공유 전 확인 메모</p><b id="s-memo">0<small>장</small></b></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>"이 글을 본 나라면?" 선택 변화</h2>
+    <p class="sub" id="choice-sub">게시글만 읽었을 때와 전체 맥락을 본 뒤의 선택이에요.</p>
+    <div class="legend"><span><i style="background: var(--before)"></i>게시글만 읽었을 때</span><span><i style="background: var(--after)"></i>전체 맥락을 본 뒤</span></div>
+    <div id="choices"></div>
+  </section>
+
+  <section>
+    <h2>나의 공유 유형 분포</h2>
+    <p class="sub" id="type-sub">처음 선택과 다시 고른 선택으로 나눈 유형이에요.</p>
+    <div class="types" id="types"></div>
+  </section>
+
+  <section>
+    <h2>모두가 만든 확산 지도</h2>
+    <p class="sub" id="spread-sub">"나라면 이 글을 어디로 보냈을까?"에서 고른 곳이에요. (여러 개 선택 가능)</p>
+    <div id="spread"></div>
+  </section>
+
+  <section>
+    <h2>댓글 모아 보기</h2>
+    <p class="sub">추천을 많이 받은 순서예요. 답글은 댓글 아래에 붙어 있어요.</p>
+    <div class="cols">
+      <div><div class="colh b">맥락 보기 전 댓글 <small id="cb-n"></small></div><ol class="clist" id="list-b"></ol></div>
+      <div><div class="colh a">맥락 본 후 댓글 <small id="ca-n"></small></div><ol class="clist" id="list-a"></ol></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>공유하기 전에 확인할 것</h2>
+    <p class="sub" id="memo-sub">참여자들이 남긴 메모예요.</p>
+    <div class="wall" id="wall"></div>
+  </section>
+
+  <footer>국어교육과 20256008 백지원, 국어교육과 20256086 김준</footer>
+</div>
+
+<script src="config.js?v=21"></script>
+<script type="module">
+const LABELS = { share: "공유한다", comment: "댓글만 단다", pass: "그냥 넘긴다", check: "사실을 더 확인한다" };
+const ORDER = ["share", "comment", "pass", "check"];
+const SPREAD = { group: "단톡방", story: "인스타 스토리", community: "커뮤니티 게시판", blog: "블로그", dm: "친구 1:1", none: "안 보낸다" };
+const TYPES = [
+  null,
+  { name: "생각이 바뀐 3초 확인형", c: "#2a8f9c" },
+  { name: "처음부터 3초 확인형", c: "#2F6FD6" },
+  { name: "한 걸음 물러선 관찰형", c: "#7B61C9" },
+  { name: "조용한 관찰형", c: "#5F6B72" },
+  { name: "목소리를 내는 공유형", c: "#d26a1c" },
+];
+const $ = s => document.querySelector(s);
+const data = { responses: [], comments: [], checks: [] };
+const el = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === "text") n.textContent = v; else if (k === "style") n.style.cssText = v; else n.setAttribute(k, v); } kids.flat().forEach(k => k != null && n.append(k)); return n; };
+const setNum = (sel, n) => { $(sel).firstChild.nodeValue = String(n); };
+const shownNick = n => n || "익명";
+function fmtTime(ms) { const d = new Date(ms); return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; }
+function typeOf(f, s) {
+  if (!s) return 0;
+  if (s === "check") return f === "check" ? 2 : 1;
+  if (s === "pass") return f === "share" || f === "comment" ? 3 : 4;
+  return 5;
+}
+
+function render() {
+  const r = data.responses;
+  const people = r.filter(x => x.before || x.after || (Array.isArray(x.spread) && x.spread.length));
+  const vis = data.comments.filter(c => !c.hidden);
+  const tops = vis.filter(c => !c.parentId);
+  const cb = vis.filter(c => c.phase !== "after"), ca = vis.filter(c => c.phase === "after");
+  setNum("#s-people", people.length); setNum("#s-cb", cb.length); setNum("#s-ca", ca.length); setNum("#s-memo", data.checks.length);
+  const now = new Date();
+  $("#meta").textContent = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")} 기준, 새 참여가 생기면 자동으로 바뀌어요.`;
+
+  // 선택 변화
+  const before = r.filter(x => x.before), after = r.filter(x => x.after);
+  $("#choice-sub").textContent = `게시글만 읽고 고른 사람 ${before.length}명, 맥락을 보고 다시 고른 사람 ${after.length}명이에요.`;
+  $("#choices").replaceChildren(...ORDER.map(k => {
+    const nb = before.filter(x => x.before === k).length, na = after.filter(x => x.after === k).length;
+    const pb = before.length ? Math.round(nb / before.length * 100) : 0, pa = after.length ? Math.round(na / after.length * 100) : 0;
+    const d = pa - pb;
+    const delta = !before.length || !after.length ? "" : d > 0 ? `▲ ${d}%p` : d < 0 ? `▼ ${-d}%p` : "변화 없음";
+    const cls = d > 0 ? "up" : d < 0 ? "down" : "same";
+    const bar = (c, p, n) => el("div", { class: "bar" }, el("div", { class: "track" }, el("div", { class: "fill " + c, style: `width:${p}%` })), el("span", { text: `${p}% (${n}명)` }));
+    return el("div", { class: "crow" }, el("div", { class: "clab", text: LABELS[k] }, el("small", { class: cls, text: delta })), el("div", { class: "bars" }, bar("b", pb, nb), bar("a", pa, na)));
+  }));
+
+  // 유형 분포
+  const tcount = [0, 0, 0, 0, 0, 0];
+  r.forEach(x => { const t = typeOf(x.before, x.after); if (t) tcount[t]++; });
+  const tsum = tcount.reduce((a, b) => a + b, 0);
+  $("#type-sub").textContent = `처음 선택과 다시 고른 선택이 모두 있는 ${tsum}명을 나눈 결과예요.`;
+  $("#types").replaceChildren(...[1, 2, 3, 4, 5].map(n => el("div", { class: "type", style: `--c:${TYPES[n].c}` },
+    el("img", { src: `media/types/type${n}.jpg`, alt: "" }),
+    el("p", { text: TYPES[n].name }),
+    el("b", { text: String(tcount[n]) }, el("small", { text: tsum ? `명, ${Math.round(tcount[n] / tsum * 100)}%` : "명" })))));
+
+  // 확산 지도
+  const withSpread = r.filter(x => Array.isArray(x.spread));
+  const counts = {}; Object.keys(SPREAD).forEach(k => counts[k] = 0);
+  withSpread.forEach(x => x.spread.forEach(k => { if (k in counts) counts[k]++; }));
+  const max = Math.max(1, ...Object.values(counts));
+  const links = Object.entries(counts).filter(([k]) => k !== "none").reduce((a, [, v]) => a + v, 0);
+  $("#spread-sub").textContent = `${withSpread.length}명이 참여해 이 글을 ${links}곳으로 보냈어요. 안 보낸다는 사람은 ${counts.none}명이에요.`;
+  $("#spread").replaceChildren(...Object.keys(SPREAD).map(k => el("div", { class: "sp" },
+    el("span", { text: SPREAD[k] }),
+    el("div", { class: "track" }, el("div", { class: "fill", style: `width:${counts[k] / max * 100}%;${k === "none" ? "background:var(--after)" : ""}` })),
+    el("b", { text: `${counts[k]}명` }))));
+
+  // 댓글
+  const score = c => (c.likes || 0) - (c.dislikes || 0);
+  const repliesOf = id => vis.filter(c => c.parentId === id).sort((a, b) => a.createdAt - b.createdAt);
+  const listOf = (phaseAfter, sel, nSel) => {
+    const ts = tops.filter(c => (c.phase === "after") === phaseAfter).sort((a, b) => score(b) - score(a) || a.createdAt - b.createdAt);
+    const ids = new Set(ts.map(c => c.id));
+    const nrep = vis.filter(c => c.parentId && ids.has(c.parentId)).length;
+    $(nSel).textContent = `댓글 ${ts.length}개${nrep ? `, 답글 ${nrep}개` : ""}`;
+    const box = $(sel);
+    if (!ts.length) { box.replaceChildren(el("li", { class: "empty", text: "아직 댓글이 없어요." })); return; }
+    box.replaceChildren(...ts.map(c => {
+      const rs = repliesOf(c.id);
+      return el("li", { class: "cm" },
+        el("div", { class: "top" }, el("span", { text: `${shownNick(c.nick)}  ${fmtTime(c.createdAt)}` }), el("span", { class: "likes", text: `추천 ${c.likes || 0}  비추천 ${c.dislikes || 0}` })),
+        el("p", { text: c.text }),
+        rs.length ? el("ul", {}, ...rs.map(x => el("li", {}, el("span", { text: shownNick(x.nick) }), x.text))) : null);
+    }));
+  };
+  listOf(false, "#list-b", "#cb-n");
+  listOf(true, "#list-a", "#ca-n");
+
+  // 메모
+  const memos = [...data.checks].sort((a, b) => a.createdAt - b.createdAt);
+  $("#memo-sub").textContent = `참여자들이 남긴 메모 ${memos.length}장이에요.`;
+  $("#wall").replaceChildren(...(memos.length ? memos.map(m => el("div", { class: "note" }, m.text, el("small", { text: shownNick(m.nick) }))) : [el("p", { class: "empty", text: "아직 붙은 메모가 없어요." })]));
+}
+
+async function start() {
+  if (new URLSearchParams(location.search).has("demo")) { window.__sum = { data, render }; render(); return; }
+  const cfg = window.CAMPAIGN_CONFIG && window.CAMPAIGN_CONFIG.firebase;
+  if (!cfg || !cfg.apiKey) { render(); return; }
+  const base = "https://www.gstatic.com/firebasejs/10.12.2";
+  try {
+    const [appMod, fs] = await Promise.all([import(`${base}/firebase-app.js`), import(`${base}/firebase-firestore.js`)]);
+    const db = fs.getFirestore(appMod.initializeApp(cfg));
+    const ms = ts => ts && ts.toMillis ? ts.toMillis() : Date.now();
+    const rows = snap => snap.docs.map(d => { const v = d.data({ serverTimestamps: "estimate" }); return { id: d.id, ...v, createdAt: ms(v.createdAt) }; });
+    fs.onSnapshot(fs.collection(db, "responses"), s => { data.responses = s.docs.map(d => d.data()); render(); });
+    fs.onSnapshot(fs.collection(db, "comments"), s => { data.comments = rows(s); render(); });
+    fs.onSnapshot(fs.collection(db, "checks"), s => { data.checks = rows(s); render(); });
+  } catch (err) { console.error(err); $("#meta").textContent = "불러오지 못했어요. 인터넷을 확인하고 새로고침해 주세요."; }
+  render();
+}
+start();
+</script>
+</body>
+</html>
