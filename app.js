@@ -205,7 +205,8 @@ class FirebaseStore {
         if (onProgress) onProgress(done);
       }
     }
-    await setDoc(doc(this.db, "settings", "main"), { round: Date.now() }, { merge: true });
+    // open 값이 없으면 보안 규칙이 쓰기를 막으므로 함께 저장
+    await setDoc(doc(this.db, "settings", "main"), { round: Date.now(), open: true }, { merge: true });
     return done;
   }
 }
