@@ -623,13 +623,16 @@ function bindSpread() {
     if (!state.open) { $("#spread-msg").textContent = T("spread_closed"); return; }
     const list = SPREAD_KEYS.filter(k => state.spreadPick.has(k));
     if (!list.length) return;
-    let ok = false;
-    try {
-      await store.saveResponse("spread", list);
-      state.spread = list; local.set("spread", list);
-      $("#spread-msg").textContent = "";
-      ok = true;
-    } catch (err) { $("#spread-msg").textContent = T("spread_fail"); console.error(err); }
+    let ok = false, saved = false;
+    save.disabled = true;
+    for (let tryNo = 0; tryNo < 2 && !saved; tryNo++) {
+      try { await store.saveResponse("spread", list); saved = true; }
+      catch (err) { console.error(err); await new Promise(r => setTimeout(r, 700)); }
+    }
+    // 저장이 안 돼도 참여는 계속 이어지게 (이 기기에만 기록)
+    state.spread = list; local.set("spread", list);
+    $("#spread-msg").textContent = saved ? "" : T("spread_local");
+    ok = true;
     if (ok) {
       // 지도 보여 주기 전에 내 공유가 퍼지는 장면
       save.disabled = true; save.textContent = T("spread_saved");

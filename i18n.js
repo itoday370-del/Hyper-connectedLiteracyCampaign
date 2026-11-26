@@ -250,6 +250,7 @@
     nick_label: { ko: "닉네임 {n}", en: "Nickname {n}", zh: "昵称 {n}", ja: "ニックネーム {n}" },
     no_comments: { ko: "아직 댓글이 없어요. 첫 댓글을 남겨 보세요.", en: "No comments yet. Be the first to comment.", zh: "还没有评论，来写第一条吧。", ja: "まだコメントがありません。最初のコメントを残してみましょう。" },
     spread_closed: { ko: "지금은 참여할 수 없어요.", en: "You can't take part right now.", zh: "现在无法参与。", ja: "今は参加できません。" },
+    spread_local: { ko: "지도에는 저장되지 않았지만 계속 진행할 수 있어요.", en: "It wasn't saved to the map, but you can keep going.", zh: "没有保存到地图上，但可以继续进行。", ja: "マップには保存されませんでしたが、このまま進めます。" },
     spread_fail: { ko: "잇지 못했어요. 다시 눌러 주세요.", en: "Couldn't add it. Please tap again.", zh: "连接失败，请再点一次。", ja: "つなげませんでした。もう一度押してください。" },
     svg_center: { ko: "글 하나", en: "One post", zh: "一篇帖子", ja: "投稿ひとつ" },
     people_n: { ko: "{n}명", en: "{n}", zh: "{n}人", ja: "{n}人" },
