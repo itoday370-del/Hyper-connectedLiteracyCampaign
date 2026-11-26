@@ -223,6 +223,7 @@ const state = {
   spread: local.get("spread", null),
   spreadPick: new Set(),
   sort: "best",
+  sort2: "best",
   comments: [],
   open: true,
   lastPost: 0,
@@ -380,18 +381,26 @@ function toggleReply(li, c) {
 }
 
 function renderComments() {
-  const list = $("#comment-list");
+  // 1단계 목록은 맥락 보기 전 댓글, 3단계 목록은 맥락 본 후 댓글만
+  renderCommentList("#comment-list", "#comment-count", c => c.phase !== "after", state.sort, "no_comments");
+  renderCommentList("#after-list", "#after-count", c => c.phase === "after", state.sort2, "no_after_comments");
+}
+
+function renderCommentList(listSel, countSel, inPhase, sort, emptyKey) {
+  const list = $(listSel);
+  if (!list) return;
   const all = state.comments.filter(c => !c.hidden);
   const ids = new Set(all.map(c => c.id));
-  const tops = all.filter(c => !c.parentId);
-  const replies = all.filter(c => c.parentId && ids.has(c.parentId));
-  $("#comment-count").textContent = tops.length + replies.length;
+  const tops = all.filter(c => !c.parentId && inPhase(c));
+  const topIds = new Set(tops.map(c => c.id));
+  const replies = all.filter(c => c.parentId && ids.has(c.parentId) && topIds.has(c.parentId));
+  $(countSel).textContent = tops.length + replies.length;
 
   const score = c => (c.likes || 0) - (c.dislikes || 0);
-  const sorted = [...tops].sort(state.sort === "best"
+  const sorted = [...tops].sort(sort === "best"
     ? (a, b) => score(b) - score(a) || b.createdAt - a.createdAt
     : (a, b) => b.createdAt - a.createdAt);
-  const bestIds = state.sort === "best"
+  const bestIds = sort === "best"
     ? new Set(sorted.filter(c => (c.likes || 0) >= 1).slice(0, 3).map(c => c.id))
     : new Set();
 
@@ -400,7 +409,7 @@ function renderComments() {
   const openText = openReply ? $(".reply-form textarea", list).value : "";
 
   list.replaceChildren();
-  if (!sorted.length) { list.append(el("li", { class: "empty", text: T("no_comments") })); return; }
+  if (!sorted.length) { list.append(el("li", { class: "empty", text: T(emptyKey) })); return; }
   for (const c of sorted) {
     const node = commentNode(c, { best: bestIds.has(c.id) });
     node.dataset.id = c.id;
@@ -685,8 +694,9 @@ async function start() {
     catch (err) { msg.textContent = T("check_fail"); console.error(err); }
   });
   $$(".tab").forEach(t => t.addEventListener("click", () => {
-    state.sort = t.dataset.sort;
-    $$(".tab").forEach(x => x.classList.toggle("on", x === t));
+    const group = t.closest(".tabs");
+    if (group.id === "after-tabs") state.sort2 = t.dataset.sort; else state.sort = t.dataset.sort;
+    $$(".tab", group).forEach(x => x.classList.toggle("on", x === t));
     renderComments();
   }));
 

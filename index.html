@@ -7,8 +7,8 @@
   <meta name="description" content="소설 「후원 명세서」로 만든 초연결사회 맥락 확인 캠페인">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="style.css?v=13">
-  <script src="i18n.js?v=14"></script>
+  <link rel="stylesheet" href="style.css?v=16">
+  <script src="i18n.js?v=16"></script>
 </head>
 <body>
   <div id="intro" class="intro" role="dialog" aria-label="소개 영상" hidden>
@@ -173,7 +173,7 @@
 
       <div class="card">
         <h3 data-i18n="after_h3">전체 이야기를 안 지금, 댓글을 다시 쓴다면?</h3>
-        <p class="sub" data-i18n="after_sub">여기 쓴 댓글은 게시글 댓글 목록에 '맥락 본 후' 표시로 올라가요.</p>
+        <p class="sub" data-i18n="after_sub">맥락을 본 사람들의 댓글은 1단계 게시글 댓글과 따로, 아래 목록에 모여요.</p>
         <form class="comment-form" id="after-form" autocomplete="off">
           <textarea id="after-text" maxlength="300" rows="3" placeholder="처음 댓글과 생각이 달라졌다면 지금 생각을 남겨 주세요" data-i18n-ph="after_ph"></textarea>
           <div class="form-row">
@@ -186,6 +186,12 @@
           <p class="mine-label" data-i18n="after_mine_label">맥락 본 후 쓴 댓글</p>
           <p class="mine-value" id="after-mine-text"></p>
         </div>
+        <p class="after-list-h"><span data-i18n="after_list_h">맥락 본 후 댓글</span> <span class="count" id="after-count">0</span></p>
+        <div class="tabs" role="tablist" id="after-tabs">
+          <button type="button" class="tab on" data-sort="best" data-i18n="tab_best">베스트</button>
+          <button type="button" class="tab" data-sort="new" data-i18n="tab_new">최신</button>
+        </div>
+        <ul class="comments" id="after-list"></ul>
       </div>
 
       <div class="card">
@@ -327,6 +333,6 @@
   })();
   </script>
   <script src="config.js?v=13"></script>
-  <script type="module" src="app.js?v=15"></script>
+  <script type="module" src="app.js?v=16"></script>
 </body>
 </html>
